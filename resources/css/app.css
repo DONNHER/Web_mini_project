@@ -1,9 +1,66 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+@config "../../tailwind.config.js";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+@layer base {
+    body {
+        background-color: #111827 !important; /* gray-900 - Dark Gray */
+        color: white;
+    }
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Force Dark Theme Overrides using standard CSS */
+    .bg-white {
+        background-color: #1f2937 !important; /* gray-800 */
+        color: #ffffff !important;
+        border-color: #374151 !important; /* gray-700 */
+    }
+
+    /* Links and Accents */
+    a, .text-brown-600 {
+        @apply text-blue-400 hover:text-blue-300 transition-colors;
+    }
+
+    .text-gray-600, .text-gray-500, .text-gray-700 {
+        color: #d1d5db !important; /* gray-300 */
+    }
+
+    .bg-brown-50 {
+        background-color: #374151 !important; /* gray-700 */
+        color: #bfdbfe !important; /* blue-200 */
+        border-color: #4b5563 !important; /* gray-600 */
+    }
+
+    .text-brown-700, .text-brown-800, .text-brown-900 {
+        color: #dbeafe !important; /* blue-100 */
+    }
+
+    /* Form Inputs */
+    input, select, textarea {
+        background-color: #374151 !important; /* gray-700 */
+        border-color: #4b5563 !important; /* gray-600 */
+        color: #ffffff !important;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: 2px solid #60a5fa !important; /* blue-400 (Light Blue) */
+        border-color: #60a5fa !important;
+    }
+
+    /* Buttons */
+    button, .bg-brown-600, .bg-green-600 {
+        background-color: #60a5fa !important; /* blue-400 (Light Blue) */
+        color: #ffffff !important;
+        border: none !important;
+    }
+
+    button:hover, .bg-brown-600:hover, .bg-green-600:hover {
+        background-color: #3b82f6 !important; /* blue-500 (Medium Blue) */
+    }
+
+    .bg-gray-50 {
+        background-color: #1f2937 !important; /* gray-800 */
+    }
+
+    .divide-gray-100, .border-gray-100 {
+        border-color: #374151 !important;
+    }
 }
