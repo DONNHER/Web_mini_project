@@ -6,10 +6,16 @@ use App\Models\Audit;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class AuditLogsExport implements FromQuery, WithHeadings, WithMapping
+class AuditLogsExport implements FromQuery, WithHeadings, WithMapping, WithChunkReading
 {
     protected $filters;
+
+    public function chunkSize(): int
+    {
+        return 2000;
+    }
 
     public function __construct($filters)
     {

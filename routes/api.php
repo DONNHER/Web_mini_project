@@ -13,8 +13,8 @@ use App\Http\Controllers\Api\OrderApiController;
 
 Route::middleware('throttle:api')->group(function () {
     // Public routes
-    Route::get('/books', [BookApiController::class, 'index']);
-    Route::get('/books/{book}', [BookApiController::class, 'show']);
+    Route::get('/books', [BookApiController::class, 'index'])->name('api.books.index');
+    Route::get('/books/{book}', [BookApiController::class, 'show'])->name('api.books.show');
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -24,9 +24,9 @@ Route::middleware('throttle:api')->group(function () {
         });
 
         // Book management (Administrative operations)
-        Route::post('/books', [BookApiController::class, 'store']);
-        Route::put('/books/{book}', [BookApiController::class, 'update']);
-        Route::delete('/books/{book}', [BookApiController::class, 'destroy']);
+        Route::post('/books', [BookApiController::class, 'store'])->name('api.books.store');
+        Route::put('/books/{book}', [BookApiController::class, 'update'])->name('api.books.update');
+        Route::delete('/books/{book}', [BookApiController::class, 'destroy'])->name('api.books.destroy');
 
         // Order endpoints
         Route::get('/orders', [OrderApiController::class, 'index']);

@@ -27,14 +27,14 @@ class DailySalesReport extends Command
         // Data for the email body
         $reportData = [
             'date' => $dateStr,
-            'total_orders' => Order::whereDate('created_at', $yesterday)->count(),
-            'total_revenue' => Order::whereDate('created_at', $yesterday)
+            'total_orders' => Order::on('mysql')->whereDate('created_at', $yesterday)->count(),
+            'total_revenue' => Order::on('mysql')->whereDate('created_at', $yesterday)
                 ->where('status', 'completed')
                 ->sum('total_amount'),
-            'completed_orders' => Order::whereDate('created_at', $yesterday)
+            'completed_orders' => Order::on('mysql')->whereDate('created_at', $yesterday)
                 ->where('status', 'completed')
                 ->count(),
-            'pending_orders' => Order::whereDate('created_at', $yesterday)
+            'pending_orders' => Order::on('mysql')->whereDate('created_at', $yesterday)
                 ->where('status', 'pending')
                 ->count(),
         ];
@@ -50,7 +50,7 @@ class DailySalesReport extends Command
         Excel::store(new OrdersExport(['date_from' => $dateStr, 'date_to' => $dateStr]), $fileName, 'local');
 
         // Send to admins
-        $admins = User::where('role', 'admin')->get();
+        $admins = User::on('mysql')->where('role', 'admin')->get();
 
         foreach ($admins as $admin) {
             Mail::to($admin->email)->send(new DailySalesReportMail($reportData, Storage::disk('local')->path($fileName)));

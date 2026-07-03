@@ -7,14 +7,20 @@ use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UsersExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
+class UsersExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue, WithChunkReading
 {
     use Exportable;
 
     protected $redactPii;
     protected $filters;
+
+    public function chunkSize(): int
+    {
+        return 2000;
+    }
 
     public function __construct($filters = [], $redactPii = false)
     {

@@ -26,19 +26,19 @@ class GenerateSalesReport extends Command
 
         $report = [
             'period' => $month->format('Y-m'),
-            'total_orders' => Order::whereBetween('created_at', [$start, $end])->count(),
-            'total_revenue' => Order::whereBetween('created_at', [$start, $end])
+            'total_orders' => Order::on('mysql')->whereBetween('created_at', [$start, $end])->count(),
+            'total_revenue' => Order::on('mysql')->whereBetween('created_at', [$start, $end])
                 ->where('status', '!=', 'cancelled')
                 ->sum('total_amount'),
-            'average_order_value' => Order::whereBetween('created_at', [$start, $end])
+            'average_order_value' => Order::on('mysql')->whereBetween('created_at', [$start, $end])
                 ->where('status', '!=', 'cancelled')
                 ->avg('total_amount') ?? 0,
-            'orders_by_status' => Order::whereBetween('created_at', [$start, $end])
+            'orders_by_status' => Order::on('mysql')->whereBetween('created_at', [$start, $end])
                 ->select('status', DB::raw('count(*) as total'))
                 ->groupBy('status')
                 ->pluck('total', 'status')
                 ->toArray(),
-            'top_books' => DB::table('order_items')
+            'top_books' => DB::connection('mysql')->table('order_items')
                 ->join('books', 'order_items.book_id', '=', 'books.id')
                 ->join('orders', 'order_items.order_id', '=', 'orders.id')
                 ->whereBetween('orders.created_at', [$start, $end])

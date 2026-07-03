@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\DB;
 use App\Listeners\AuditSubscriber;
+use App\Models\Book;
+use App\Observers\BookObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,52 +27,65 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register Observers
+        Book::observe(BookObserver::class);
+
         // Register Audit Subscriber for authentication events
         Event::subscribe(AuditSubscriber::class);
 
         /**
-         * 4.4 API Rate Limiting - Tiered Strategy
+         * Query Performance Logging
+         * Logs queries exceeding 100ms to the query_performance_logs table
+         */
+        DB::listen(function ($query) {
+            if ($query->time >= 100) {
+                try {
+                    DB::table('query_performance_logs')->insert([
+                        'sql' => $query->sql,
+                        'bindings' => json_encode($query->bindings),
+                        'time_ms' => $query->time,
+                        'connection' => $query->connectionName,
+                        'url' => request()->fullUrl(),
+                        'method' => request()->method(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                } catch (\Exception $e) {
+                    // Fail silently to avoid interrupting the main application flow
+                }
+            }
+        });
+
+        /**
+         * 4.4 API Rate Limiting - Tiered Strategy (Intelligent Redis-backed)
          */
         RateLimiter::for('api', function (Request $request) {
             $user = $request->user();
 
-            // 1. Determine Identity (User ID for auth, IP for guest)
-            $key = $user ? $user->id : $request->ip();
-
-            // 2. Define Limits based on Tier/Role
-            $limits = [];
-
+            // 1. Determine Tier
+            $tier = 'public';
             if ($user) {
                 if ($user->isAdmin()) {
-                    // admin: 1000 requests/minute
-                    $limits = [
-                        Limit::perMinute(1000)->by($key),
-                        Limit::perSecond(50)->by($key), // Burst protection
-                    ];
+                    $tier = 'admin';
                 } elseif ($user->isPremium()) {
-                    // premium: 300 requests/minute
-                    $limits = [
-                        Limit::perMinute(300)->by($key),
-                        Limit::perSecond(10)->by($key), // Burst protection
-                    ];
+                    $tier = 'premium';
                 } else {
-                    // standard: 60 requests/minute
-                    $limits = [
-                        Limit::perMinute(60)->by($key),
-                        Limit::perSecond(2)->by($key), // Burst protection
-                    ];
+                    $tier = 'standard';
                 }
-            } else {
-                // public: 30 requests/minute for guests
-                $limits = [
-                    Limit::perMinute(30)->by($key),
-                    Limit::perSecond(1)->by($key), // Burst protection
-                ];
             }
 
-            // Apply custom JSON 429 response to all limits
-            return array_map(function (Limit $limit) {
-                return $limit->response(function (Request $request, array $headers) {
+            // 2. Define Limits per Tier
+            $limits = [
+                'public' => 30,
+                'standard' => 60,
+                'premium' => 300,
+                'admin' => 1000,
+            ];
+
+            // 3. Apply Limit based on Tier
+            return Limit::perMinute($limits[$tier] ?? 30)
+                ->by($user?->id ?: $request->ip())
+                ->response(function (Request $request, array $headers) {
                     return response()->json([
                         'error' => 'Rate limit exceeded',
                         'message' => 'Too many requests. Please slow down.',
@@ -80,7 +96,6 @@ class AppServiceProvider extends ServiceProvider
                         ]
                     ], 429, $headers);
                 });
-            }, $limits);
         });
 
         /**

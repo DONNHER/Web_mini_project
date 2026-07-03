@@ -4,29 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Category;
+use App\Repositories\BookRepository;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
+    protected $bookRepository;
+
+    public function __construct(BookRepository $bookRepository)
+    {
+        $this->bookRepository = $bookRepository;
+    }
+
     public function index(Request $request)
     {
-        $query = Book::with('category');
-
-        // Filter by category only if a specific category is selected
+        // 3.2.2 Benchmark Optimization: Use Repository with Cursor Pagination
         if ($request->has('category') && $request->category != '') {
-            $query->where('category_id', $request->category);
+            $books = $this->bookRepository->getByCategory($request->category, 100);
+        } elseif ($request->has('search') && $request->search != '') {
+            $books = $this->bookRepository->search($request->search, 100);
+        } else {
+            $books = $this->bookRepository->getActiveCatalog(100);
         }
 
-        // Search by title or author
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                ->orWhere('author', 'like', "%{$search}%");
-            });
-        }
-
-        $books = $query->paginate(12);
         $categories = Category::getCached();
 
         return view('books.index', compact('books', 'categories'));

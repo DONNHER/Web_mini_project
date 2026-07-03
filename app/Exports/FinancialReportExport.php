@@ -3,11 +3,12 @@
 namespace App\Exports;
 
 use App\Models\Order;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Illuminate\Support\Facades\DB;
 
-class FinancialReportExport implements FromCollection, WithHeadings
+class FinancialReportExport implements FromQuery, WithHeadings, WithChunkReading
 {
     protected $filters;
 
@@ -16,7 +17,12 @@ class FinancialReportExport implements FromCollection, WithHeadings
         $this->filters = $filters;
     }
 
-    public function collection()
+    public function chunkSize(): int
+    {
+        return 2000;
+    }
+
+    public function query()
     {
         $query = Order::query()
             ->select(
@@ -36,7 +42,7 @@ class FinancialReportExport implements FromCollection, WithHeadings
             $query->whereDate('created_at', '<=', $this->filters['date_to']);
         }
 
-        return $query->groupBy('date')->orderBy('date', 'desc')->get();
+        return $query->groupBy('date')->orderBy('date', 'desc');
     }
 
     public function headings(): array

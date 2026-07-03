@@ -7,12 +7,18 @@ use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class OrdersExport implements FromQuery, WithHeadings, WithMapping
+class OrdersExport implements FromQuery, WithHeadings, WithMapping, WithChunkReading
 {
     use Exportable;
 
     protected $filters;
+
+    public function chunkSize(): int
+    {
+        return 2000;
+    }
 
     public function __construct($filters = [])
     {
@@ -21,7 +27,7 @@ class OrdersExport implements FromQuery, WithHeadings, WithMapping
 
     public function query()
     {
-        $query = Order::query()->with(['user', 'orderItems.book']);
+        $query = Order::on('mysql')->with(['user', 'orderItems.book']);
 
         if (!empty($this->filters['status'])) {
             $query->where('status', $this->filters['status']);

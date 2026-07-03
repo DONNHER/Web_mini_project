@@ -3,54 +3,37 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BookResource;
 use App\Models\Book;
+use App\Repositories\BookRepository;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class BookApiController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    protected $bookRepository;
+
+    public function __construct(BookRepository $bookRepository)
     {
-        $query = Book::with('category');
-
-        // 2. Field filtering: Allow clients to specify required fields (?fields=id,title,price)
-        if ($request->has('fields')) {
-            $fields = explode(',', $request->get('fields'));
-            // Ensure related keys are included if needed, or handle simple fields
-            $query->select($fields);
-        }
-
-        if ($request->has('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('author', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        // 3. Pagination: Cursor-based pagination for large collections
-        $books = $query->orderBy('id')->cursorPaginate($request->get('per_page', 20));
-
-        return response()->json([
-            'success' => true,
-            'data' => $books,
-        ]);
+        $this->bookRepository = $bookRepository;
     }
 
-    public function show(Request $request, Book $book): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
-        // Apply field filtering to show if requested
-        if ($request->has('fields')) {
-            $fields = explode(',', $request->get('fields'));
-            $data = $book->only($fields);
+        if ($request->has('search')) {
+            $books = $this->bookRepository->search($request->search, $request->get('per_page', 20));
         } else {
-            $book->load('category', 'reviews.user');
-            $data = $book;
+            $books = $this->bookRepository->getActiveCatalog($request->get('per_page', 20));
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $data,
-        ]);
+        return BookResource::collection($books);
+    }
+
+    public function show(Request $request, Book $book): BookResource
+    {
+        $book->loadMissing(['category:id,name']);
+
+        return new BookResource($book);
     }
 
     public function store(Request $request): JsonResponse

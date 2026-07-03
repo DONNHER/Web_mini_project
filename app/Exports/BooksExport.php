@@ -7,95 +7,50 @@ use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class BooksExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
+class BooksExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue, WithChunkReading
 {
     use Exportable;
 
     protected $filters;
     protected $columns;
 
-    public function __construct($filters = [], $columns = [])
+    public function chunkSize(): int
     {
-        $this->filters = $filters;
-        $this->columns = $columns;
+        return 2000;
     }
 
     public function query()
     {
-        $query = Book::query()->with('category');
-
-        if (!empty($this->filters['category'])) {
-            $query->where('category_id', $this->filters['category']);
-        }
-
-        if (isset($this->filters['min_price'])) {
-            $query->where('price', '>=', $this->filters['min_price']);
-        }
-
-        if (isset($this->filters['max_price'])) {
-            $query->where('price', '<=', $this->filters['max_price']);
-        }
-
-        if (isset($this->filters['stock_status'])) {
-            if ($this->filters['stock_status'] === 'in_stock') {
-                $query->where('stock_quantity', '>', 0);
-            } elseif ($this->filters['stock_status'] === 'out_of_stock') {
-                $query->where('stock_quantity', '=', 0);
-            }
-        }
-
-        if (!empty($this->filters['date_from'])) {
-            $query->whereDate('created_at', '>=', $this->filters['date_from']);
-        }
-
-        if (!empty($this->filters['date_to'])) {
-            $query->whereDate('created_at', '<=', $this->filters['date_to']);
-        }
-
-        return $query;
+        return Book::query()
+            ->select(['isbn', 'title', 'author', 'price', 'stock_quantity', 'published_at'])
+            ->where('is_active', true)
+            ->orderBy('id');
     }
 
     public function headings(): array
     {
-        $allHeadings = [
-            'id' => 'ID',
-            'isbn' => 'ISBN',
-            'title' => 'Title',
-            'author' => 'Author',
-            'price' => 'Price',
-            'stock_quantity' => 'Stock',
-            'category' => 'Category',
-            'description' => 'Description',
-            'created_at' => 'Created At',
+        return [
+            'ISBN',
+            'Title',
+            'Author',
+            'Price',
+            'Stock',
+            'Published At',
         ];
-
-        if (empty($this->columns)) {
-            return array_values($allHeadings);
-        }
-
-        return array_intersect_key($allHeadings, array_flip($this->columns));
     }
 
     public function map($book): array
     {
-        $mapping = [
-            'id' => $book->id,
-            'isbn' => $book->isbn,
-            'title' => $book->title,
-            'author' => $book->author,
-            'price' => $book->price,
-            'stock_quantity' => $book->stock_quantity,
-            'category' => $book->category->name,
-            'description' => $book->description,
-            'created_at' => $book->created_at->toDateTimeString(),
+        return [
+            $book->isbn,
+            $book->title,
+            $book->author,
+            $book->price,
+            $book->stock_quantity,
+            $book->published_at,
         ];
-
-        if (empty($this->columns)) {
-            return array_values($mapping);
-        }
-
-        return array_intersect_key($mapping, array_flip($this->columns));
     }
 }

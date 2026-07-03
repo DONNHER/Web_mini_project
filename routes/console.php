@@ -92,3 +92,11 @@ Schedule::command('audit:archive')
     ->onSuccess(fn () => Log::info('Task Success: audit:archive'))
     ->onFailure(fn () => Log::error('Task Failure: audit:archive'))
     ->appendOutputTo($logPath);
+
+// Materialized Views for Reporting
+Schedule::command('app:refresh-materialized-views')
+    ->hourly()
+    ->withoutOverlapping()
+    ->onSuccess(fn () => Log::info('Task Success: app:refresh-materialized-views'))
+    ->onFailure(fn () => Log::error('Task Failure: app:refresh-materialized-views'))
+    ->appendOutputTo($logPath);

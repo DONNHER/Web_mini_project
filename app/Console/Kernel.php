@@ -35,6 +35,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:cleanup-temp-files')->dailyAt('01:30');
         $schedule->command('app:generate-sales-report')->monthlyOn(1, '05:00');
 
+        // Warm up cache daily at 3:30 AM
+        $schedule->command('app:warm-cache')->dailyAt('03:30');
+
         // Queue worker (if using database queue)
         $schedule->command('queue:work --stop-when-empty')->everyMinute();
 
@@ -45,6 +48,7 @@ class Kernel extends ConsoleKernel
         Commands\CleanupOldSessions::class,
         Commands\CleanupTempFiles::class,
         Commands\GenerateSalesReport::class,
+        Commands\WarmCacheCommand::class,
     ];
 
     protected function commands()
