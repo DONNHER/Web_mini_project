@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/orders/{order}/invoice', [OrderController::class, 'downloadInvoice'])->name('orders.invoice');
 
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('/recommendations', [\App\Http\Controllers\RecommendationController::class, 'index'])->name('user.recommendations');
 
     // User Data Portability
     Route::get('/dashboard/export-personal-data', [UserDashboardController::class, 'exportPersonalData'])->name('user.export.personal');
@@ -93,6 +94,14 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
     Route::get('/audit-logs/{audit}', [AuditLogController::class, 'show'])->name('audit-logs.show');
+
+    Route::get('/ai-security', [\App\Http\Controllers\Admin\AISecurityController::class, 'index'])->name('ai-security.index');
+    Route::post('/ai-security/resolve/{order}', [\App\Http\Controllers\Admin\AISecurityController::class, 'resolve'])->name('ai-security.resolve');
+    Route::post('/ai-security/rescan/{order}', [\App\Http\Controllers\Admin\AISecurityController::class, 'rescanOrder'])->name('ai-security.rescan');
+    Route::post('/ai-security/sync', [\App\Http\Controllers\Admin\AISecurityController::class, 'syncFlaggedStatus'])->name('ai-security.sync');
+    Route::get('/ai-security/logs/{log}', [\App\Http\Controllers\Admin\AISecurityController::class, 'showLog'])->name('ai-security.show-log');
+    Route::delete('/ai-security/logs/{log}', [\App\Http\Controllers\Admin\AISecurityController::class, 'destroyLog'])->name('ai-security.destroy-log');
+    Route::get('/ai-usage', [\App\Http\Controllers\Admin\AISecurityController::class, 'usage'])->name('ai-security.usage');
 });
 
 require __DIR__.'/auth.php';

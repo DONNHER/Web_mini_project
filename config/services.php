@@ -35,4 +35,32 @@ return [
         ],
     ],
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-1.5-flash'),
+    ],
+
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+    ],
+
+    'huggingface' => [
+        'key' => env('HF_API_KEY'),
+    ],
+
+    'google_maps' => [
+        'key' => env('GOOGLE_MAPS_API_KEY'),
+    ],
+
+    'ollama' => [
+        'enabled' => env('OLLAMA_ENABLED', true),
+        'base_url' => env('OLLAMA_BASE_URL', 'http://localhost:11434'),
+        'model' => env('OLLAMA_MODEL', 'llama3.2'),
+    ],
+
+    'ai' => [
+        'default' => env('AI_DEFAULT_PROVIDER', 'gemini'),
+        'fallback' => env('AI_FALLBACK_ENABLED', true),
+    ],
+
 ];

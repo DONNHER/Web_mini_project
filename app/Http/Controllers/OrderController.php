@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use App\Jobs\ProcessAITask;
 
 class OrderController extends Controller
 {
@@ -136,6 +137,9 @@ class OrderController extends Controller
             $this->cartService->clearCart();
 
             DB::commit();
+
+            // 3. Dispatch AI Security Scan in background
+            ProcessAITask::dispatch($order->id, request()->ip())->onQueue('ai-tasks');
 
             return redirect()->route('orders.show', $order)
                 ->with('success', 'Order placed successfully!');

@@ -44,10 +44,18 @@ class AuditSubscriber
     protected function audit($event, $user = null, array $data = [])
     {
         $audit = new Audit();
+
+        // Performer information
         $audit->user_id = $user ? $user->id : null;
+        $audit->user_type = $user ? get_class($user) : null;
+
         $audit->event = $event;
-        $audit->auditable_type = $user ? get_class($user) : 'System';
+
+        // Target model information
+        // If it's a user action (login, etc), the user is both performer AND target
+        $audit->auditable_type = $user ? get_class($user) : User::class; // Fallback to User class if no user
         $audit->auditable_id = $user ? $user->id : 0;
+
         $audit->old_values = [];
         $audit->new_values = $data;
         $audit->url = Request::fullUrl();

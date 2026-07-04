@@ -32,9 +32,9 @@ class SecurityAlert extends Notification implements ShouldQueue
             ->line('A critical security event has been recorded in the system.')
             ->line('Event: ' . strtoupper($this->audit->event))
             ->line('Model: ' . class_basename($this->audit->auditable_type) . ' (#' . $this->audit->auditable_id . ')')
-            ->line('Performed by: ' . ($this->audit->user->name ?? 'System'))
+            ->line('Performed by: ' . ($this->audit->performer->name ?? 'System'))
             ->line('Time: ' . $this->audit->created_at->toDateTimeString())
-            ->action('View Audit Details', route('admin.audit-logs.show', $this->audit))
+            ->action('View Audit Details', route('admin.audit-logs.show', ['audit' => $this->audit->id]))
             ->error()
             ->line('If this action was unexpected, please investigate immediately.');
     }

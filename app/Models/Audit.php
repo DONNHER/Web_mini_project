@@ -9,14 +9,34 @@ use Illuminate\Support\Facades\Notification;
 
 class Audit extends BaseAudit
 {
+    protected $table = 'audits';
+    protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
+
+    public function getKeyName()
+    {
+        return 'id';
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
 
     protected $casts = [
         'old_values' => 'json',
         'new_values' => 'json',
-        'auditable_id' => 'string',
     ];
+
+    /**
+     * Define a clear relationship for the user who performed the action.
+     * We use 'performer' to avoid conflicts with the vendor's 'user' trait.
+     */
+    public function performer()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     protected static function booted()
     {

@@ -78,9 +78,32 @@ To ensure high availability, the `WarmCategoryCache` job pre-loads popular categ
 ### 📡 Read/Write Splitting
 Configured in `config/database.php` to offload heavy reporting queries to read replicas, ensuring the primary database remains responsive for write operations.
 
-### 🛡 Security & Rate Limiting
+### 🛡 Security & AI Intelligence
+- **Multi-Provider Fallback**: Intelligent routing that automatically switches between Gemini (Primary), OpenAI, and Ollama (Local) to ensure 100% uptime for AI services.
+- **Dedicated AI Queueing**: Heavy workloads (Fraud Detection, Content Generation) are offloaded to a specialized `ai-tasks` background queue to maintain UI responsiveness.
+- **Cost & Usage Tracking**: Real-time monitoring of token consumption and estimated costs across all AI providers.
+- **Automated Security Auditing**: Scheduled batch processing that scans orders for fraud every 30 minutes via the Laravel Scheduler.
 - **Intelligent Tiered Throttling**: Uses Redis to enforce limits based on user roles (Guest, Standard, Premium, Admin).
 - **Audit Logging**: Comprehensive monitoring of sensitive operations with SHA-256 integrity verification.
+
+---
+
+## 📊 Monitoring & Administration
+
+### 1. AI Usage Dashboard
+Navigate to `/admin/ai-usage` to view real-time consumption statistics, provider breakdowns, and consumption history.
+
+### 2. Queue Management
+To process background AI tasks, use the specialized worker:
+```bash
+php artisan queue:work --queue=ai-tasks
+```
+
+### 3. Automated Scheduling
+The system automates maintenance and audits. To run the scheduler locally:
+```bash
+php artisan schedule:work
+```
 
 ---
 

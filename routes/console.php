@@ -100,3 +100,11 @@ Schedule::command('app:refresh-materialized-views')
     ->onSuccess(fn () => Log::info('Task Success: app:refresh-materialized-views'))
     ->onFailure(fn () => Log::error('Task Failure: app:refresh-materialized-views'))
     ->appendOutputTo($logPath);
+
+// AI Security Batch Audit - Every 30 minutes
+Schedule::command('app:batch-security-audit')
+    ->everyThirtyMinutes()
+    ->withoutOverlapping()
+    ->onSuccess(fn () => Log::info('Task Success: app:batch-security-audit'))
+    ->onFailure(fn () => Log::error('Task Failure: app:batch-security-audit'))
+    ->appendOutputTo($logPath);

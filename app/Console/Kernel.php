@@ -38,6 +38,9 @@ class Kernel extends ConsoleKernel
         // Warm up cache daily at 3:30 AM
         $schedule->command('app:warm-cache')->dailyAt('03:30');
 
+        // Run batch security audits hourly
+        $schedule->command('app:batch-security-audit')->hourly();
+
         // Queue worker (if using database queue)
         $schedule->command('queue:work --stop-when-empty')->everyMinute();
 
@@ -49,6 +52,8 @@ class Kernel extends ConsoleKernel
         Commands\CleanupTempFiles::class,
         Commands\GenerateSalesReport::class,
         Commands\WarmCacheCommand::class,
+        Commands\BatchSecurityAudit::class,
+        Commands\SimulateFraud::class,
     ];
 
     protected function commands()

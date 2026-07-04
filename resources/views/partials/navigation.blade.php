@@ -30,6 +30,9 @@
                             <a href="{{ route('admin.audit-logs.index') }}" class="hover:bg-gray-800 px-3 py-2 rounded-md transition">
                                 Audit Logs
                             </a>
+                            <a href="{{ route('admin.ai-security.index') }}" class="hover:bg-gray-800 px-3 py-2 rounded-md transition">
+                                AI Security
+                            </a>
                             <a href="{{ route('admin.categories.create') }}" class="hover:bg-gray-800 px-3 py-2 rounded-md transition">
                                 Add Category
                             </a>
@@ -82,6 +85,9 @@
 
                         <a href="{{ route('orders.index') }}" class="hover:bg-gray-800 px-3 py-2 rounded-md transition">
                             My Orders
+                        </a>
+                        <a href="{{ route('user.recommendations') }}" class="hover:bg-gray-800 px-3 py-2 rounded-md transition flex items-center">
+                            <span class="mr-1">✨</span> Recommended
                         </a>
                     @endif
 

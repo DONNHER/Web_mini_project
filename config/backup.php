@@ -126,7 +126,7 @@ return [
         'notifiable' => \Spatie\Backup\Notifications\Notifiable::class,
 
         'mail' => [
-            'to' => env('BACKUP_NOTIFICATION_EMAIL', 'admin@pageturner.com'),
+            'to' => env('BACKUP_NOTIFICATION_EMAIL', 's.cuarteros.dionherlove@cmu.edu.ph'),
 
             'from' => [
                 'address' => env('MAIL_FROM_ADDRESS', 'noreply@pageturner.com'),
