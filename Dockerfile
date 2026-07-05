@@ -7,7 +7,10 @@ COPY . .
 RUN npm run build
 
 # --- Stage 2: Final Production Image ---
-FROM php:8.2-apache
+FROM php:8.4-apache
+
+# Set COMPOSER_ALLOW_SUPERUSER to allow plugins
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
 # Set Document Root for Apache
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
