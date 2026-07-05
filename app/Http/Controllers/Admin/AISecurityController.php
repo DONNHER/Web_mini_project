@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Order;
+use App\Models\Loan;
 use App\Models\AIUsageLog;
 use App\Models\AISecurityLog;
-use App\Services\AI\FraudDetectionService;
+use App\Services\AI\RiskAssessmentService;
 
 class AISecurityController extends Controller
 {
     /**
-     * Display AI security logs and flagged orders.
+     * Display AI risk assessment logs and flagged loans.
      */
     public function index(Request $request)
     {
@@ -21,12 +21,12 @@ class AISecurityController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-        $flaggedOrders = Order::where('status', 'flagged')
+        $flaggedLoans = Loan::where('status', 'flagged')
             ->with('user')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('admin.ai-security.index', compact('logs', 'flaggedOrders'));
+        return view('admin.ai-security.index', compact('logs', 'flaggedLoans'));
     }
 
     /**
@@ -49,20 +49,20 @@ class AISecurityController extends Controller
     }
 
     /**
-     * Resolve a flagged order.
+     * Resolve a flagged loan based on risk assessment.
      */
-    public function resolve(Request $request, Order $order)
+    public function resolve(Request $request, Loan $loan)
     {
         $validated = $request->validate([
-            'action' => 'required|in:approve,cancel',
+            'action' => 'required|in:approve,reject',
         ]);
 
         if ($validated['action'] === 'approve') {
-            $order->update(['status' => 'pending']);
-            $message = 'Order has been approved and moved back to processing.';
+            $loan->update(['status' => 'pending']);
+            $message = 'Loan has been cleared and moved back to processing.';
         } else {
-            $order->update(['status' => 'cancelled']);
-            $message = 'Order has been cancelled due to fraud risk.';
+            $loan->update(['status' => 'rejected']);
+            $message = 'Loan has been rejected due to high credit risk.';
         }
 
         return back()->with('success', $message);
@@ -86,36 +86,36 @@ class AISecurityController extends Controller
     }
 
     /**
-     * Re-trigger AI analysis for a flagged order.
+     * Re-trigger AI risk assessment for a flagged loan.
      */
-    public function rescanOrder(Order $order, FraudDetectionService $fraudService)
+    public function rescanLoan(Loan $loan, RiskAssessmentService $riskService)
     {
-        $result = $fraudService->analyzeOrder($order, request()->ip());
+        $result = $riskService->analyzeRisk($loan, request()->ip());
 
         $status = $result['score'] > 70 ? 'flagged' : 'pending';
-        $order->update(['status' => $status]);
+        $loan->update(['status' => $status]);
 
-        return back()->with('success', "Rescan completed. AI Score: {$result['score']}% - Result: {$result['category']}");
+        return back()->with('success', "Risk assessment completed. AI Score: {$result['score']}% - Result: {$result['category']}");
     }
 
     /**
-     * Batch sync status for all orders that have high risk logs but aren't flagged.
+     * Batch sync status for all loans that have high risk logs but aren't flagged.
      */
     public function syncFlaggedStatus()
     {
         $highRiskLogs = AISecurityLog::where('risk_score', '>', 70)
-            ->where('resource_type', 'Order')
+            ->where('resource_type', 'Loan')
             ->get();
 
         $updatedCount = 0;
         foreach ($highRiskLogs as $log) {
-            $order = Order::find($log->resource_id);
-            if ($order && $order->status !== 'flagged' && $order->status !== 'cancelled') {
-                $order->update(['status' => 'flagged']);
+            $loan = Loan::find($log->resource_id);
+            if ($loan && $loan->status !== 'flagged' && $loan->status !== 'rejected' && $loan->status !== 'completed') {
+                $loan->update(['status' => 'flagged']);
                 $updatedCount++;
             }
         }
 
-        return back()->with('success', "Synchronized status for {$updatedCount} high-risk orders.");
+        return back()->with('success', "Synchronized status for {$updatedCount} high-risk loans.");
     }
 }

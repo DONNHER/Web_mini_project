@@ -33,7 +33,9 @@ class UsersExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue, 
         $query = User::query();
 
         if (!empty($this->filters['role'])) {
-            $query->where('role', $this->filters['role']);
+            $query->whereHas('role', function($q) {
+                $q->where('name', $this->filters['role']);
+            });
         }
 
         if (!empty($this->filters['date_from'])) {

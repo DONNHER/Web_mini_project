@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
-use App\Models\Category;
+use App\Models\LoanProduct;
+use App\Models\LoanCategory;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Optimized with eager loading for categories and reviews to prevent N+1 queries in the view
-        $featuredBooks = Book::with(['category', 'reviews'])
+        $featuredProducts = LoanProduct::with(['category'])
+                            ->where('is_active', true)
                             ->orderBy('created_at', 'desc')
                             ->take(8)
                             ->get();
 
-        $categories = Category::withCount('books')->get();
+        $categories = LoanCategory::withCount('loanProducts')->get();
 
-        return view('home', compact('featuredBooks', 'categories'));
+        return view('home', compact('featuredProducts', 'categories'));
     }
 }

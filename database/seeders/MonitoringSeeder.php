@@ -16,11 +16,14 @@ class MonitoringSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::where('role', 'admin')->first() ?? User::factory()->create(['role' => 'admin']);
-        $customers = User::where('role', 'customer')->get();
+        $adminRole = \App\Models\Role::where('name', 'admin')->first();
+        $borrowerRole = \App\Models\Role::where('name', 'borrower')->first();
+
+        $admin = User::where('role_id', $adminRole?->id)->first() ?? User::factory()->create(['role_id' => $adminRole?->id]);
+        $customers = User::where('role_id', $borrowerRole?->id)->get();
 
         if ($customers->isEmpty()) {
-            $customers = User::factory(5)->create(['role' => 'customer']);
+            $customers = User::factory(5)->create(['role_id' => $borrowerRole?->id]);
         }
 
         // 1. Seed Import Logs

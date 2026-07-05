@@ -15,17 +15,13 @@ class RecommendationController extends Controller
     }
 
     /**
-     * Show personalized recommendations to the user.
+     * Show AI-powered credit insights and pre-approvals.
      */
     public function index(Request $request)
     {
         $user = $request->user();
+        $insights = $this->recommendationService->getFinancialInsights($user);
 
-        // Show a loading state or cached results
-        $recommendations = $this->recommendationService->getRecommendations($user, 8);
-
-        return view('user.recommendations', [
-            'books' => $recommendations
-        ]);
+        return view('user.recommendations', compact('insights'));
     }
 }

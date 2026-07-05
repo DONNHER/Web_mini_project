@@ -56,15 +56,17 @@ class AuditLogController extends Controller
         $audits = $query->paginate(25);
 
         $modelTypes = [
-            'Book' => 'Books',
+            'LoanProduct' => 'Loan Products',
             'User' => 'Users',
-            'Category' => 'Categories',
-            'Order' => 'Orders',
-            'Review' => 'Reviews',
-            'ImportExportLog' => 'Import/Export Logs'
+            'LoanCategory' => 'Loan Categories',
+            'Loan' => 'Loans',
+            'Repayment' => 'Repayments',
+            'ImportExportLog' => 'Import/Export Logs',
+            'System' => 'System (Errors)',
+            'Page' => 'Page Visits'
         ];
 
-        $events = ['created', 'updated', 'deleted', 'restored', 'login', 'logout', 'login_failed', 'password_reset', 'email_verified'];
+        $events = ['created', 'updated', 'deleted', 'restored', 'login', 'logout', 'login_failed', 'password_reset', 'email_verified', 'accessed', 'error_logged'];
 
         $users = User::orderBy('name')->pluck('name', 'id');
 

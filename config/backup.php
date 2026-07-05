@@ -51,8 +51,7 @@ return [
              * MySQL, PostgreSQL, SQLite, and MongoDB are supported. Set to empty array to skip.
              */
             'databases' => [
-                // Set to empty since sqlite3 binary is not available in this environment.
-                // The database file will still be backed up as a regular file.
+                'mysql',
             ],
         ],
 
@@ -76,13 +75,14 @@ return [
             /*
              * The filename prefix used for the backup zip file.
              */
-            'filename_prefix' => 'backup-',
+            'filename_prefix' => 'lending-backup-',
 
             /*
              * The disk names on which the backups will be stored.
              */
             'disks' => [
                 'local',
+                's3', // Assume cloud storage is configured
             ],
         ],
 
@@ -177,17 +177,17 @@ return [
             /*
              * The number of days for which all backups must be kept.
              */
-            'keep_all_backups_for_days' => 7,
+            'keep_all_backups_for_days' => 30,
 
             /*
              * The number of days for which daily backups must be kept.
              */
-            'keep_daily_backups_for_days' => 7,
+            'keep_daily_backups_for_days' => 30,
 
             /*
              * The number of weeks for which one weekly backup must be kept.
              */
-            'keep_weekly_backups_for_weeks' => 4,
+            'keep_weekly_backups_for_weeks' => 8,
 
             /*
              * The number of months for which one monthly backup must be kept.

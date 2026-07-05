@@ -3,64 +3,77 @@
 
 @layer base {
     body {
-        background-color: #111827 !important; /* gray-900 - Dark Gray */
-        color: white;
+        background-color: var(--brand-color, #C06C3E) !important;
+        color: black;
     }
 
-    /* Force Dark Theme Overrides using standard CSS */
-    .bg-white {
-        background-color: #1f2937 !important; /* gray-800 */
-        color: #ffffff !important;
-        border-color: #374151 !important; /* gray-700 */
+    /* Force Theme Overrides */
+    .bg-white, .bg-gray-800, .bg-gray-900 {
+        background-color: var(--brand-color, #C06C3E) !important;
+        color: #000000 !important;
+        border-color: rgba(0, 0, 0, 0.1) !important;
     }
 
     /* Links and Accents */
-    a, .text-brown-600 {
-        @apply text-blue-400 hover:text-blue-300 transition-colors;
+    a {
+        color: #000000;
+        text-decoration: underline;
     }
 
-    .text-gray-600, .text-gray-500, .text-gray-700 {
-        color: #d1d5db !important; /* gray-300 */
+    a:hover {
+        opacity: 0.8;
     }
 
-    .bg-brown-50 {
-        background-color: #374151 !important; /* gray-700 */
-        color: #bfdbfe !important; /* blue-200 */
-        border-color: #4b5563 !important; /* gray-600 */
+    .text-white, .text-gray-400, .text-gray-300, .text-blue-400, .text-gray-500 {
+        color: #000000 !important;
     }
 
-    .text-brown-700, .text-brown-800, .text-brown-900 {
-        color: #dbeafe !important; /* blue-100 */
+    .border-gray-700, .border-gray-800, .border-gray-600 {
+        border-color: rgba(0, 0, 0, 0.2) !important;
     }
 
     /* Form Inputs */
     input, select, textarea {
-        background-color: #374151 !important; /* gray-700 */
-        border-color: #4b5563 !important; /* gray-600 */
-        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border-color: rgba(0, 0, 0, 0.3) !important;
+        color: #000000 !important;
+    }
+
+    input::placeholder, textarea::placeholder {
+        color: rgba(0, 0, 0, 0.5) !important;
     }
 
     input:focus, select:focus, textarea:focus {
-        outline: 2px solid #60a5fa !important; /* blue-400 (Light Blue) */
-        border-color: #60a5fa !important;
+        outline: 2px solid #000000 !important;
+        border-color: #000000 !important;
     }
 
     /* Buttons */
-    button, .bg-brown-600, .bg-green-600 {
-        background-color: #60a5fa !important; /* blue-400 (Light Blue) */
-        color: #ffffff !important;
+    button, .bg-blue-600, .bg-green-600, .bg-red-600, .bg-indigo-600 {
+        background-color: #000000 !important;
+        color: #C06C3E !important;
         border: none !important;
+        font-weight: bold !important;
     }
 
-    button:hover, .bg-brown-600:hover, .bg-green-600:hover {
-        background-color: #3b82f6 !important; /* blue-500 (Medium Blue) */
+    button:hover {
+        opacity: 0.9 !important;
     }
 
-    .bg-gray-50 {
-        background-color: #1f2937 !important; /* gray-800 */
+    .bg-gray-700 {
+        background-color: rgba(0, 0, 0, 0.1) !important;
     }
 
-    .divide-gray-100, .border-gray-100 {
-        border-color: #374151 !important;
+    /* Table headers */
+    thead.bg-gray-900 {
+        background-color: rgba(0, 0, 0, 0.2) !important;
+    }
+
+    th {
+        color: #000000 !important;
     }
 }
+
+/* Custom classes for the new theme */
+.bg-brand { background-color: #C06C3E; }
+.text-brand { color: #C06C3E; }

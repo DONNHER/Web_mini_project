@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\Order;
-use App\Services\AI\FraudDetectionService;
+use App\Models\Loan;
+use App\Services\AI\RiskAssessmentService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,51 +15,44 @@ class ProcessAITask implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $orderId;
+    protected $loanId;
     protected $ip;
 
-    /**
-     * The number of times the job may be attempted.
-     */
     public $tries = 3;
-
-    /**
-     * The number of seconds to wait before retrying the job.
-     */
     public $backoff = 30;
 
     /**
      * Create a new job instance.
-     * We use this for heavy, non-blocking AI security scans.
+     * We use this for heavy, non-blocking AI risk assessments.
      */
-    public function __construct(int $orderId, ?string $ip = null)
+    public function __construct(int $loanId, ?string $ip = null)
     {
-        $this->orderId = $orderId;
+        $this->loanId = $loanId;
         $this->ip = $ip;
     }
 
     /**
      * Execute the job.
      */
-    public function handle(FraudDetectionService $fraudService): void
+    public function handle(RiskAssessmentService $riskService): void
     {
-        $order = Order::find($this->orderId);
+        $loan = Loan::find($this->loanId);
 
-        if (!$order) {
+        if (!$loan) {
             return;
         }
 
-        Log::info("Starting background AI security audit for Order #{$this->orderId}");
+        Log::info("Starting background AI risk assessment for Loan #{$this->loanId}");
 
-        // Perform the analysis (this might take several seconds)
-        $result = $fraudService->analyzeOrder($order, $this->ip);
+        // Perform the analysis
+        $result = $riskService->analyzeRisk($loan, $this->ip);
 
-        // Update order status if AI detects high risk
+        // Update loan status if AI detects high risk
         if ($result['score'] > 70 || $result['category'] === 'High') {
-            $order->update(['status' => 'flagged']);
-            Log::warning("Order #{$this->orderId} has been FLAGGED for fraud review. Score: {$result['score']}%");
+            $loan->update(['status' => 'flagged']);
+            Log::warning("Loan #{$this->loanId} has been FLAGGED for high credit risk. Score: {$result['score']}%");
         }
 
-        Log::info("Background AI audit completed for Order #{$this->orderId}. Result: " . $result['category']);
+        Log::info("Background AI risk assessment completed for Loan #{$this->loanId}. Result: " . $result['category']);
     }
 }

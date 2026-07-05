@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Imports\BooksImport;
-use App\Exports\BooksExport;
+use App\Imports\LoanProductsImport;
+use App\Exports\LoanProductsExport;
 use App\Imports\UsersImport;
 use App\Exports\UsersExport;
-use App\Models\Category;
+use App\Models\LoanCategory;
 use App\Models\ImportExportLog;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,7 +18,7 @@ class DataPortabilityController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = LoanCategory::all();
         $logs = ImportExportLog::with('user')->latest()->take(10)->get();
         return view('admin.data-portability.index', compact('categories', 'logs'));
     }
@@ -31,9 +31,7 @@ class DataPortabilityController extends Controller
         ]);
 
         $file = $request->file('file');
-        // Use now()->timestamp instead of time() for better testability
         $fileName = now()->timestamp . '_' . $file->getClientOriginalName();
-        // Explicitly use 'local' disk to ensure consistency with Excel::queueImport and tests
         $path = $file->storeAs('imports', $fileName, 'local');
 
         $log = ImportExportLog::create([
@@ -46,8 +44,8 @@ class DataPortabilityController extends Controller
         $updateExisting = $request->duplicate_action === 'update';
 
         try {
-            Excel::queueImport(new BooksImport($updateExisting, $log->id), $path, 'local');
-            return redirect()->back()->with('success', 'Book import has been queued. Check the logs below for progress.');
+            Excel::queueImport(new LoanProductsImport($updateExisting, $log->id), $path, 'local');
+            return redirect()->back()->with('success', 'Loan product import has been queued. Check the logs below for progress.');
         } catch (\Exception $e) {
             $log->update(['status' => 'failed', 'errors' => [$e->getMessage()]]);
             return redirect()->back()->with('error', 'Import failed: ' . $e->getMessage());
@@ -61,9 +59,7 @@ class DataPortabilityController extends Controller
         ]);
 
         $file = $request->file('file');
-        // Use now()->timestamp instead of time() for better testability
         $fileName = 'users_' . now()->timestamp . '_' . $file->getClientOriginalName();
-        // Explicitly use 'local' disk to ensure consistency with Excel::queueImport and tests
         $path = $file->storeAs('imports/users', $fileName, 'local');
 
         $log = ImportExportLog::create([
@@ -84,11 +80,10 @@ class DataPortabilityController extends Controller
 
     public function export(Request $request)
     {
-        $filters = $request->only(['category', 'min_price', 'max_price', 'stock_status', 'date_from', 'date_to']);
-        $columns = $request->input('columns', []);
+        $filters = $request->only(['category', 'date_from', 'date_to']);
         $format = $request->input('format', 'xlsx');
 
-        $fileName = 'books_export_' . now()->format('Y-m-d_His') . '.' . $format;
+        $fileName = 'loan_products_export_' . now()->format('Y-m-d_His') . '.' . $format;
 
         ImportExportLog::create([
             'type' => 'export',
@@ -97,7 +92,12 @@ class DataPortabilityController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        $export = new BooksExport($filters, $columns);
+        if ($format === 'json') {
+            $data = \App\Models\LoanProduct::with('category')->get();
+            return response()->json($data)->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+        }
+
+        $export = new LoanProductsExport($filters);
 
         return Excel::download($export, $fileName);
     }
@@ -123,18 +123,18 @@ class DataPortabilityController extends Controller
 
     public function template()
     {
-        $headers = ['ISBN', 'Title', 'Author', 'Price', 'Stock', 'Category', 'Description'];
+        $headers = ['name', 'category', 'interest_rate', 'duration', 'min_amount', 'max_amount', 'description'];
 
         $callback = function() use ($headers) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $headers);
-            fputcsv($file, ['9780123456789', 'Sample Book Title', 'Author Name', '29.99', '100', 'Fiction', 'A great book description']);
+            fputcsv($file, ['Salary Loan', 'Personal Loans', '3.5', '6', '5000', '50000', 'Fast cash based on salary']);
             fclose($file);
         };
 
         return response()->stream($callback, 200, [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="books_import_template.csv"',
+            'Content-Disposition' => 'attachment; filename="loan_products_template.csv"',
         ]);
     }
 
@@ -145,13 +145,13 @@ class DataPortabilityController extends Controller
         $callback = function() use ($headers) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $headers);
-            fputcsv($file, ['Corporate User', 'user@company.com', 'customer', 'securePassword123']);
+            fputcsv($file, ['Corporate User', 'user@company.com', 'borrower', 'securePassword123']);
             fclose($file);
         };
 
         return response()->stream($callback, 200, [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="users_import_template.csv"',
+            'Content-Disposition' => 'attachment; filename="users_template.csv"',
         ]);
     }
 

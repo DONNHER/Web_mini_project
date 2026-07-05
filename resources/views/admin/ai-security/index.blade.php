@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'AI Security Dashboard')
+@section('title', 'AI Risk Assessment Dashboard')
 
 @section('header')
     <div class="flex justify-between items-center">
         <h2 class="font-semibold text-xl text-blue-400 leading-tight">
-            AI Fraud Detection & Security Dashboard
+            AI Loan Risk Assessment & Security Dashboard
         </h2>
         <a href="{{ route('admin.ai-security.usage') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition flex items-center">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,12 +21,12 @@
     <!-- AI Overview Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-xl">
-            <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Flagged Orders</h3>
-            <p class="mt-2 text-3xl font-bold text-red-500">{{ $flaggedOrders->count() }}</p>
-            <p class="mt-1 text-xs text-gray-500">Awaiting manual review</p>
+            <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Flagged Loans</h3>
+            <p class="mt-2 text-3xl font-bold text-red-500">{{ $flaggedLoans->count() }}</p>
+            <p class="mt-1 text-xs text-gray-500">Awaiting manual credit review</p>
         </div>
         <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-xl">
-            <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Total Scans</h3>
+            <h3 class="text-gray-400 text-sm font-medium uppercase tracking-wider">Total Assessments</h3>
             <p class="mt-2 text-3xl font-bold text-blue-400">{{ $logs->total() }}</p>
             <p class="mt-1 text-xs text-gray-500">Last 30 days</p>
         </div>
@@ -35,16 +35,16 @@
             <p class="mt-2 text-3xl font-bold text-yellow-500">
                 {{ number_format($logs->avg('risk_score'), 1) }}
             </p>
-            <p class="mt-1 text-xs text-gray-500">Behavioral assessment</p>
+            <p class="mt-1 text-xs text-gray-500">Behavioral risk assessment</p>
         </div>
     </div>
 
-    <!-- Flagged Orders Queue -->
+    <!-- Flagged Loans Queue -->
     <div class="bg-gray-800 rounded-lg border border-gray-700 shadow-xl overflow-hidden">
         <div class="p-6 border-b border-gray-700 flex justify-between items-center">
             <div>
-                <h3 class="text-lg font-bold text-white">Manual Review Queue</h3>
-                <p class="text-xs text-gray-500">Orders marked as 'flagged' due to high AI risk scores</p>
+                <h3 class="text-lg font-bold text-white">Manual Risk Review Queue</h3>
+                <p class="text-xs text-gray-500">Loans marked as 'flagged' due to high AI risk scores</p>
             </div>
             <div class="flex items-center space-x-3">
                 <form action="{{ route('admin.ai-security.sync') }}" method="POST">
@@ -63,7 +63,7 @@
             <table class="min-w-full divide-y divide-gray-700">
                 <thead class="bg-gray-900">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Order</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Loan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">User</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Amount</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">AI Reasoning</th>
@@ -71,22 +71,22 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-700 bg-gray-800">
-                    @forelse($flaggedOrders as $order)
+                    @forelse($flaggedLoans as $loan)
                         @php
-                            $latestLog = \App\Models\AISecurityLog::where('resource_id', $order->id)
-                                ->where('resource_type', 'Order')
+                            $latestLog = \App\Models\AISecurityLog::where('resource_id', $loan->id)
+                                ->where('resource_type', 'Loan')
                                 ->latest()
                                 ->first();
                         @endphp
                         <tr class="hover:bg-gray-750 transition">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-blue-400">
-                                #{{ $order->id }}
+                                #{{ $loan->id }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                {{ $order->user->name }}
+                                {{ $loan->user->name }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-white font-mono">
-                                ₱{{ number_format($order->total_amount, 2) }}
+                                ₱{{ number_format($loan->principal_amount, 2) }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-400 max-w-xs">
                                 <div class="bg-gray-900 p-2 rounded border-l-2 border-red-500 italic">
@@ -94,27 +94,27 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
-                                <a href="{{ route('orders.show', $order) }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition">
+                                <a href="{{ route('loans.show', $loan) }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition">
                                     View
                                 </a>
-                                <form action="{{ route('admin.ai-security.rescan', $order) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.ai-security.rescan', $loan) }}" method="POST" class="inline">
                                     @csrf
                                     <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded transition">
                                         Rescan
                                     </button>
                                 </form>
-                                <form action="{{ route('admin.ai-security.resolve', $order) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.ai-security.resolve', $loan) }}" method="POST" class="inline">
                                     @csrf
                                     <input type="hidden" name="action" value="approve">
                                     <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded transition">
-                                        Approve
+                                        Clear
                                     </button>
                                 </form>
-                                <form action="{{ route('admin.ai-security.resolve', $order) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.ai-security.resolve', $loan) }}" method="POST" class="inline">
                                     @csrf
-                                    <input type="hidden" name="action" value="cancel">
+                                    <input type="hidden" name="action" value="reject">
                                     <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition">
-                                        Cancel
+                                        Reject
                                     </button>
                                 </form>
                             </td>
@@ -122,7 +122,7 @@
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-10 text-center text-gray-500 italic">
-                                No suspicious activity detected. System is secure.
+                                No high-risk loan applications detected. System is secure.
                             </td>
                         </tr>
                     @endforelse
@@ -134,7 +134,7 @@
     <!-- AI Scan History -->
     <div class="bg-gray-800 rounded-lg border border-gray-700 shadow-xl overflow-hidden">
         <div class="p-6 border-b border-gray-700">
-            <h3 class="text-lg font-bold text-white">AI Analysis History</h3>
+            <h3 class="text-lg font-bold text-white">AI Assessment History</h3>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700">
@@ -204,7 +204,7 @@
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <span>Decisions on this page are augmented by Artificial Intelligence. Human review is recommended for high-risk scores.</span>
+        <span>Decisions on this page are augmented by Artificial Intelligence. Human review is recommended for high risk scores.</span>
     </div>
 </div>
 

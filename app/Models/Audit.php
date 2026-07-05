@@ -31,7 +31,6 @@ class Audit extends BaseAudit
 
     /**
      * Define a clear relationship for the user who performed the action.
-     * We use 'performer' to avoid conflicts with the vendor's 'user' trait.
      */
     public function performer()
     {
@@ -45,7 +44,6 @@ class Audit extends BaseAudit
                 $audit->id = (string) Str::uuid();
             }
 
-            // Ensure created_at is set for checksum if not already present
             if (!$audit->created_at) {
                 $audit->created_at = now();
             }
@@ -55,7 +53,7 @@ class Audit extends BaseAudit
 
         static::created(function ($audit) {
             if ($audit->isCriticalEvent()) {
-                $admins = User::where('role', 'admin')->get();
+                $admins = User::whereHas('role', fn($q) => $q->where('name', 'admin'))->get();
                 if ($admins->count() > 0) {
                     Notification::send($admins, new SecurityAlert($audit));
                 }
@@ -69,7 +67,6 @@ class Audit extends BaseAudit
 
     public static function generateChecksum($audit)
     {
-        // Ensure we use a consistent string representation for created_at
         $createdAt = $audit->created_at;
         if ($createdAt instanceof \DateTimeInterface) {
             $createdAt = $createdAt->format('Y-m-d H:i:s');
@@ -97,22 +94,24 @@ class Audit extends BaseAudit
 
     public function isCriticalEvent()
     {
-        $criticalEvents = ['login_failed', 'deleted', 'password_reset'];
+        $criticalEvents = ['login_failed', 'deleted', 'password_reset', 'error_logged'];
 
         if (in_array($this->event, $criticalEvents)) {
             return true;
         }
 
+        // Suspicious: Changing role
         if ($this->auditable_type === User::class && $this->event === 'updated') {
-            if (isset($this->new_values['role'])) {
+            if (isset($this->new_values['role_id'])) {
                 return true;
             }
         }
 
-        if ($this->auditable_type === Book::class && $this->event === 'updated') {
-            $oldPrice = $this->old_values['price'] ?? 0;
-            $newPrice = $this->new_values['price'] ?? 0;
-            if ($oldPrice > 0 && $newPrice > ($oldPrice * 2)) {
+        // Suspicious: Large interest rate jump
+        if ($this->auditable_type === LoanProduct::class && $this->event === 'updated') {
+            $oldRate = $this->old_values['interest_rate'] ?? 0;
+            $newRate = $this->new_values['interest_rate'] ?? 0;
+            if ($oldRate > 0 && $newRate > ($oldRate * 1.5)) {
                 return true;
             }
         }

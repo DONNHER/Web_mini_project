@@ -34,11 +34,14 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, WithBatchI
     {
         $this->rowsCount++;
 
+        $roleName = ($row['role'] ?? 'customer') === 'admin' ? 'admin' : 'borrower';
+        $role = \App\Models\Role::where('name', $roleName)->first();
+
         return new User([
             'name'     => $row['name'],
             'email'    => $row['email'],
             'password' => Hash::make($row['password'] ?? Str::random(12)),
-            'role'     => $row['role'] ?? 'customer',
+            'role_id'  => $role?->id,
         ]);
     }
 
@@ -47,7 +50,7 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, WithBatchI
         return [
             'name'  => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role'  => 'nullable|string|in:admin,customer',
+            'role'  => 'nullable|string',
         ];
     }
 

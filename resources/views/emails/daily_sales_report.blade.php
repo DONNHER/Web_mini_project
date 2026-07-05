@@ -45,7 +45,7 @@
             <p style="margin-top: 30px;">Attached to this email is a detailed Excel export of all orders from yesterday.</p>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} PageTurner Bookstore. Automated System Report.</p>
+            <p>&copy; {{ date('Y') }} PageTurner Library. Automated System Report.</p>
         </div>
     </div>
 </body>

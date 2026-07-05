@@ -84,7 +84,7 @@ function printRecoveryCodes() {
     printWindow.document.write('<html><head><title>Recovery Codes</title>');
     printWindow.document.write('<style>body { font-family: monospace; padding: 20px; }</style>');
     printWindow.document.write('</head><body>');
-    printWindow.document.write('<h1>PageTurner Bookstore - Recovery Codes</h1>');
+    printWindow.document.write('<h1>PageTurner Library - Recovery Codes</h1>');
     printWindow.document.write('<p>Keep these codes safe. Each can be used once.</p>');
     printWindow.document.write('<ul>');
     codes.forEach(function(code) {

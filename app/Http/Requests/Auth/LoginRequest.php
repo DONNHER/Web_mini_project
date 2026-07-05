@@ -41,6 +41,21 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
+        // 3 failed attempts logic (Requirement 6.1)
+        $attempts = RateLimiter::attempts($this->throttleKey());
+        if ($attempts >= 3) {
+            session(['show_captcha' => true]);
+            // Logic to email admin or log security alert could go here
+            \App\Models\Audit::create([
+                'event' => 'security_alert',
+                'auditable_type' => 'Auth',
+                'auditable_id' => 0,
+                'new_values' => ['message' => 'Multiple failed login attempts for: ' . $this->email],
+                'ip_address' => $this->ip(),
+                'user_agent' => $this->userAgent(),
+            ]);
+        }
+
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
@@ -50,6 +65,7 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+        session()->forget('show_captcha');
     }
 
     /**

@@ -35,11 +35,12 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $borrowerRole = \App\Models\Role::where('name', 'borrower')->first();
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'customer',
+            'role_id' => $borrowerRole ? $borrowerRole->id : null,
         ]);
 
         event(new Registered($user));

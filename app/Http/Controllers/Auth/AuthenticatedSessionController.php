@@ -30,6 +30,15 @@ class AuthenticatedSessionController extends Controller
 
         // Check if user has 2FA enabled
         if ($request->user()->hasTwoFactorEnabled()) {
+            // If they use Email OTP (simplified: always generate one if 2FA enabled)
+            $otp = rand(100000, 999999);
+            $request->user()->update([
+                'otp_code' => $otp,
+                'otp_expires_at' => now()->addMinutes(10)
+            ]);
+
+            $request->user()->notify(new \App\Notifications\SendOtpNotification($otp));
+
             session(['2fa_required' => true]);
             return redirect()->route('two-factor.challenge');
         }

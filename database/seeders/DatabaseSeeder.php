@@ -3,29 +3,56 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Role;
+use App\Models\LoanCategory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Create admin user
-        if (!User::where('email', 's.cuarteros.dionherlove@cmu.edu.ph')->exists()) {
+        // 1. Seed Roles and Permissions
+        $this->call(RolesAndPermissionsSeeder::class);
+
+        // 2. Create admin user
+        if (!User::where('email', 'admin@lending.com')->exists()) {
+            $adminRole = Role::where('name', 'admin')->first();
             User::factory()->create([
                 'name' => 'Admin User',
-                'email' => 's.cuarteros.dionherlove@cmu.edu.ph',
-                'role' => 'admin',
+                'email' => 'admin@lending.com',
+                'role_id' => $adminRole?->id,
             ]);
         }
 
-        // 2. Step 3 - Mass Seeding Orchestration
+        // 3. Create borrower user
+        if (!User::where('email', 'borrower@lending.com')->exists()) {
+            $userRole = Role::where('name', 'user')->first();
+            User::factory()->create([
+                'name' => 'John Doe',
+                'email' => 'borrower@lending.com',
+                'role_id' => $userRole?->id,
+            ]);
+        }
+
+        // 4. Create comaker user
+        if (!User::where('email', 'comaker@lending.com')->exists()) {
+            $userRole = Role::where('name', 'user')->first();
+            User::factory()->create([
+                'name' => 'Jane Smith',
+                'email' => 'comaker@lending.com',
+                'role_id' => $userRole?->id,
+                'is_comaker' => true,
+            ]);
+        }
+
+        // 5. Seed Loan Categories and Products
         $this->call([
-            CategorySeeder::class, // Must run before books
-            MassBookSeeder::class,
+            LoanCategorySeeder::class,
+            LoanProductSeeder::class,
         ]);
 
-        // 3. Warm up cache for categories
-        \App\Models\Category::all()->each(function ($category) {
+        // 6. Warm up cache for categories
+        LoanCategory::all()->each(function ($category) {
             \App\Jobs\WarmCategoryCache::dispatch($category->id);
         });
     }

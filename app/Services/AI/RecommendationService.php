@@ -2,8 +2,9 @@
 
 namespace App\Services\AI;
 
-use App\Models\Book;
+use App\Models\Loan;
 use App\Models\User;
+use App\Models\LoanProduct;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -17,97 +18,99 @@ class RecommendationService
     }
 
     /**
-     * Get personalized recommendations for a user.
+     * Get AI-driven financial insights and pre-approval status.
      */
-    public function getRecommendations(User $user, int $limit = 5): array
+    public function getFinancialInsights(User $user): array
     {
-        $cacheKey = "user_{$user->id}_recommendations";
+        $cacheKey = "user_{$user->id}_financial_insights";
 
-        return Cache::remember($cacheKey, 3600, function () use ($user, $limit) {
-            // 1. Gather User Context (Purchase History)
-            $purchasedBooks = $user->orders()
-                ->where('status', 'completed')
-                ->with('orderItems.book.category')
-                ->get()
-                ->pluck('orderItems')
-                ->flatten()
-                ->pluck('book')
-                ->unique('id');
+        return Cache::remember($cacheKey, 3600, function () use ($user) {
+            // 1. Analyze Repayment Behavior
+            $loans = $user->loans()->with('repayments')->get();
 
-            if ($purchasedBooks->isEmpty()) {
-                // Fallback to general bestsellers if no history
-                return Book::where('is_active', true)
-                    ->orderBy('published_at', 'desc')
-                    ->limit($limit)
-                    ->get()
-                    ->toArray();
+            $stats = [
+                'total_loans' => $loans->count(),
+                'completed_loans' => $loans->where('status', 'completed')->count(),
+                'on_time_payments' => 0,
+                'delayed_payments' => 0,
+                'current_overdue' => $loans->where('status', 'overdue')->count(),
+            ];
+
+            foreach ($loans as $loan) {
+                foreach ($loan->repayments as $repayment) {
+                    if ($repayment->payment_date && $repayment->payment_date > $loan->due_date) {
+                        $stats['delayed_payments']++;
+                    } else {
+                        $stats['on_time_payments']++;
+                    }
+                }
             }
 
-            // 2. Build AI Prompt
-            $historySummary = $purchasedBooks->take(5)->map(fn($b) => "- {$b->title} ({$b->category->name})")->implode("\n");
-            $prompt = $this->buildRecommendationPrompt($historySummary);
+            // 2. Build AI Prompt for Credit Analysis
+            $prompt = $this->buildCreditAnalysisPrompt($stats, $user);
 
-            // 3. Call AI with Fallback
+            // 3. Call AI
             try {
-                $aiResult = $this->aiManager->generateWithFallback($prompt, 'recommendations');
-                $searchCriteria = $this->parseRecommendationResponse($aiResult['text']);
+                $aiResult = $this->aiManager->generateWithFallback($prompt, 'credit_insights');
+                $insights = $this->parseInsightResponse($aiResult['text']);
 
-                // 4. Query 1M records based on AI "Intuition"
-                return $this->fetchBooksFromCriteria($searchCriteria, $purchasedBooks->pluck('id')->toArray(), $limit);
+                // 4. Attach Suggested Products if Reliability is High
+                if ($insights['reliability_score'] >= 80 && $stats['delayed_payments'] === 0) {
+                    $insights['suggested_products'] = LoanProduct::where('is_active', true)
+                        ->where('interest_rate', '<', 5) // Suggest "Prime" rates for good borrowers
+                        ->limit(3)
+                        ->get()
+                        ->toArray();
+                }
+
+                return $insights;
 
             } catch (\Exception $e) {
-                Log::error("AI Recommendation failed: " . $e->getMessage());
-                return Book::where('is_active', true)->limit($limit)->get()->toArray();
+                Log::error("AI Credit Insight failed: " . $e->getMessage());
+                return $this->fallbackInsights();
             }
         });
     }
 
-    protected function buildRecommendationPrompt(string $history): string
+    protected function buildCreditAnalysisPrompt(array $stats, User $user): string
     {
-        return "You are a expert librarian. Based on a user's reading history, suggest 3 specific search keywords and 2 preferred categories.
-        User History:
-        {$history}
+        $data = json_encode($stats);
+        return "You are a Senior Credit Analyst for 'LendingSystem'.
+        Analyze this borrower's performance data and provide a reliability rating and financial advice.
 
-        Respond ONLY in JSON format:
-        {\"keywords\": [\"space exploration\", \"magic systems\", \"detective noir\"], \"categories\": [\"Science Fiction\", \"Mystery\"]}";
+        Borrower Stats: {$data}
+        Name: {$user->name}
+        Member Since: {$user->created_at->format('Y-m-d')}
+
+        Respond ONLY in structured JSON format with:
+        'reliability_score' (0-100),
+        'status' ('Excellent', 'Good', 'At Risk', 'Poor'),
+        'ai_insight' (A 2-sentence summary of their reliability),
+        'recommendation' (What they should do next, e.g., 'Eligible for higher limits' or 'Improve payment consistency').";
     }
 
-    protected function parseRecommendationResponse(string $text): array
+    protected function parseInsightResponse(string $text): array
     {
         $cleanText = preg_replace('/```json|```/', '', $text);
         $data = json_decode(trim($cleanText), true);
 
         return [
-            'keywords' => $data['keywords'] ?? [],
-            'categories' => $data['categories'] ?? []
+            'reliability_score' => $data['reliability_score'] ?? 50,
+            'status' => $data['status'] ?? 'Needs Review',
+            'ai_insight' => $data['ai_insight'] ?? 'Insufficient data for analysis.',
+            'recommendation' => $data['recommendation'] ?? 'Maintain regular payments.',
+            'suggested_products' => []
         ];
     }
 
-    protected function fetchBooksFromCriteria(array $criteria, array $excludeIds, int $limit): array
+    protected function fallbackInsights(): array
     {
-        $query = Book::where('is_active', true)
-            ->whereNotIn('id', $excludeIds);
-
-        // Filter by AI suggested categories if they exist
-        if (!empty($criteria['categories'])) {
-            $query->whereHas('category', function($q) use ($criteria) {
-                $q->whereIn('name', $criteria['categories']);
-            });
-        }
-
-        // Search suggested keywords in title/description
-        if (!empty($criteria['keywords'])) {
-            $query->where(function($q) use ($criteria) {
-                foreach ($criteria['keywords'] as $keyword) {
-                    $q->orWhere('title', 'like', "%{$keyword}%")
-                      ->orWhere('description', 'like', "%{$keyword}%");
-                }
-            });
-        }
-
-        return $query->inRandomOrder()
-            ->limit($limit)
-            ->get()
-            ->toArray();
+        return [
+            'reliability_score' => 0,
+            'status' => 'Pending Analysis',
+            'ai_insight' => 'We are currently analyzing your payment history.',
+            'recommendation' => 'Please wait for your next billing cycle.',
+            'suggested_products' => []
+        ];
     }
 }

@@ -57,8 +57,9 @@ return [
     */
 
     'features' => [
-        'fraud_detection' => 'gemini',
-        'chat' => 'openai',
+        'risk_assessment' => 'gemini',
+        'chat' => 'ollama',
+        'credit_insights' => 'gemini',
         'summarization' => 'gemini',
         'recommendations' => 'gemini',
     ],

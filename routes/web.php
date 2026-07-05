@@ -1,29 +1,23 @@
 <?php
 
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LoanProductController;
+use App\Http\Controllers\LoanCategoryController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DataPortabilityController;
 use App\Http\Controllers\Admin\AuditLogController;
-use Maatwebsite\Excel\Facades\Excel;
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Book browsing (public)
-Route::get('/books', [BookController::class, 'index'])->name('books.index');
-Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
-
-// Category browsing (public)
-Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+// Loan Product browsing (public)
+Route::get('/loan-products', [LoanProductController::class, 'index'])->name('loan_products.index');
+Route::get('/loan-products/{loanProduct}', [LoanProductController::class, 'show'])->name('loan_products.show');
 
 // 2FA Routes
 Route::middleware('auth')->group(function () {
@@ -36,72 +30,73 @@ Route::middleware('auth')->group(function () {
 });
 
 // Authenticated routes
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/logout-other-sessions', [ProfileController::class, 'logoutOtherBrowserSessions'])->name('profile.logout-other-sessions');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/cart', [OrderController::class, 'cart'])->name('orders.cart');
-    Route::post('/cart/add/{book}', [OrderController::class, 'addToCart'])->name('orders.cart.add');
-    Route::post('/cart/update', [OrderController::class, 'updateCart'])->name('orders.cart.update');
-    Route::get('/cart/remove/{book}', [OrderController::class, 'removeFromCart'])->name('orders.cart.remove');
-
-    Route::get('/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
-
-    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
-
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::get('/orders/{order}/invoice', [OrderController::class, 'downloadInvoice'])->name('orders.invoice');
+    Route::get('/loans/apply/{loanProduct}', [LoanController::class, 'apply'])->name('loans.apply');
+    Route::post('/loans/apply', [LoanController::class, 'store'])->name('loans.store');
+    Route::get('/loans', [LoanController::class, 'index'])->name('loans.index');
+    Route::get('/loans/{loan}', [LoanController::class, 'show'])->name('loans.show');
+    Route::get('/loans/{loan}/invoice', [LoanController::class, 'invoice'])->name('loans.invoice');
 
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
-    Route::get('/recommendations', [\App\Http\Controllers\RecommendationController::class, 'index'])->name('user.recommendations');
+    Route::get('/profile/export', [ProfileController::class, 'export'])->name('user.export.personal');
+    Route::get('/recommendations', [RecommendationController::class, 'index'])->name('user.recommendations');
 
-    // User Data Portability
-    Route::get('/dashboard/export-personal-data', [UserDashboardController::class, 'exportPersonalData'])->name('user.export.personal');
-    Route::get('/dashboard/export-orders-excel', [UserDashboardController::class, 'exportOrdersExcel'])->name('user.export.orders.excel');
-    Route::get('/dashboard/export-orders-pdf', [UserDashboardController::class, 'exportOrdersPdf'])->name('user.export.orders.pdf');
-    Route::get('/dashboard/export-reading-history', [UserDashboardController::class, 'exportReadingHistory'])->name('user.export.reading');
+    // Notifications
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/unread', [\App\Http\Controllers\NotificationController::class, 'getUnread'])->name('notifications.unread');
+    Route::post('/notifications/mark-read/{id}', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('/notifications/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::get('/profile/notifications', [\App\Http\Controllers\NotificationController::class, 'preferences'])->name('profile.notifications');
+    Route::patch('/profile/notifications', [\App\Http\Controllers\NotificationController::class, 'updatePreferences'])->name('profile.notifications.update');
+
+    // Chatbot Routes
+    Route::get('/chat', [\App\Http\Controllers\ChatbotController::class, 'index'])->name('chatbot.index');
+    Route::post('/chat/send', [\App\Http\Controllers\ChatbotController::class, 'sendMessage'])->name('chatbot.send');
+    Route::post('/chat/clear', [\App\Http\Controllers\ChatbotController::class, 'clear'])->name('chatbot.clear');
+
+    // AI Integration Routes
+    Route::post('/ai/categorize', [\App\Http\Controllers\AIIntegrationController::class, 'categorize'])->name('ai.categorize');
 });
 
 // Admin-only routes
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/stats', [AdminDashboardController::class, 'stats'])->name('dashboard.stats');
     Route::post('/dashboard/backup', [AdminDashboardController::class, 'runBackup'])->name('dashboard.backup');
 
-    Route::resource('categories', CategoryController::class)->except(['index', 'show']);
-    Route::resource('books', BookController::class)->except(['index', 'show']);
-
-    // Admin order management & exports
-    Route::get('/orders', [OrderController::class, 'adminIndex'])->name('orders.index');
-    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
-    Route::get('/orders/export', [OrderController::class, 'export'])->name('orders.export');
-    Route::get('/orders/financial-report', [OrderController::class, 'exportFinancial'])->name('orders.financial');
-
-    // Data Portability
-    Route::get('/data-portability', [DataPortabilityController::class, 'index'])->name('data-portability');
-    Route::post('/import', [DataPortabilityController::class, 'import'])->name('import');
-    Route::get('/export', [DataPortabilityController::class, 'export'])->name('export');
-    Route::get('/template', [DataPortabilityController::class, 'template'])->name('template');
-    Route::get('/data-portability/logs/{log}', [DataPortabilityController::class, 'show'])->name('data-portability.show');
-
-    // User Portability Routes
-    Route::post('/users/import', [DataPortabilityController::class, 'importUsers'])->name('users.import');
+    // User Impersonation
+    // Data Portability (Requirement 8)
+    Route::get('/data-portability', [DataPortabilityController::class, 'index'])->name('data-portability.index');
+    Route::get('/loan-products/export', [DataPortabilityController::class, 'export'])->name('loan-products.export');
+    Route::post('/loan-products/import', [DataPortabilityController::class, 'import'])->name('loan-products.import');
     Route::get('/users/export', [DataPortabilityController::class, 'exportUsers'])->name('users.export');
-    Route::get('/users/template', [DataPortabilityController::class, 'userTemplate'])->name('users.template');
+    Route::post('/users/import', [DataPortabilityController::class, 'importUsers'])->name('users.import');
+
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::resource('loan-products', LoanProductController::class)->except(['index', 'show']);
+
+    // Admin loan management
+    Route::get('/loans', [LoanController::class, 'adminIndex'])->name('loans.index');
+    Route::patch('/loans/{loan}/status', [LoanController::class, 'updateStatus'])->name('loans.status');
 
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
     Route::get('/audit-logs/{audit}', [AuditLogController::class, 'show'])->name('audit-logs.show');
 
     Route::get('/ai-security', [\App\Http\Controllers\Admin\AISecurityController::class, 'index'])->name('ai-security.index');
-    Route::post('/ai-security/resolve/{order}', [\App\Http\Controllers\Admin\AISecurityController::class, 'resolve'])->name('ai-security.resolve');
-    Route::post('/ai-security/rescan/{order}', [\App\Http\Controllers\Admin\AISecurityController::class, 'rescanOrder'])->name('ai-security.rescan');
-    Route::post('/ai-security/sync', [\App\Http\Controllers\Admin\AISecurityController::class, 'syncFlaggedStatus'])->name('ai-security.sync');
-    Route::get('/ai-security/logs/{log}', [\App\Http\Controllers\Admin\AISecurityController::class, 'showLog'])->name('ai-security.show-log');
-    Route::delete('/ai-security/logs/{log}', [\App\Http\Controllers\Admin\AISecurityController::class, 'destroyLog'])->name('ai-security.destroy-log');
-    Route::get('/ai-usage', [\App\Http\Controllers\Admin\AISecurityController::class, 'usage'])->name('ai-security.usage');
+
+    // System Settings
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::patch('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
+    // Reports
+    Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/generate', [\App\Http\Controllers\Admin\ReportController::class, 'generate'])->name('reports.generate');
 });
 
 require __DIR__.'/auth.php';

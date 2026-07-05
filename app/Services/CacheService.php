@@ -12,9 +12,9 @@ class CacheService
     public function invalidateCatalog(): void
     {
         try {
-            Cache::tags(['books', 'catalog'])->flush();
+            Cache::tags(['loan_products', 'catalog'])->flush();
         } catch (\BadMethodCallException $e) {
-            Cache::forget('catalog_active_p_start');
+            Cache::forget('loan_products_active_p_start');
         }
     }
 
@@ -26,8 +26,7 @@ class CacheService
         try {
             Cache::tags(["category_{$categoryId}"])->flush();
         } catch (\BadMethodCallException $e) {
-            Cache::forget("books_cat_{$categoryId}_p_start");
-            Cache::forget("catalog_cat_{$categoryId}_p_start");
+            Cache::forget("loan_products_cat_{$categoryId}_p_start");
         }
     }
 }

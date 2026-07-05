@@ -64,19 +64,4 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
-
-    Route::get('/cart', [OrderController::class, 'cart'])
-            ->name('orders.cart');
-
-    Route::post('/cart/add/{book}', [OrderController::class, 'addToCart'])
-          ->name('orders.cart.add');
-
-    Route::post('/cart/update', [OrderController::class, 'updateCart'])
-            ->name('orders.cart.update');
-
-    Route::get('/cart/remove/{book}', [OrderController::class, 'removeFromCart'])
-           ->name('orders.cart.remove');
-
-    Route::get('/checkout', [OrderController::class, 'checkout'])
-            ->name('orders.checkout');
 });

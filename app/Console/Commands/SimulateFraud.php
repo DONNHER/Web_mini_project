@@ -2,8 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Order;
+use App\Models\Loan;
 use App\Models\User;
+use App\Models\Role;
 use App\Services\AI\FraudDetectionService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -17,18 +18,19 @@ class SimulateFraud extends Command
     {
         $this->info("🔄 Initializing Security Overlap Simulation...");
 
-        $user = User::where('role', 'admin')->first() ?? User::factory()->create(['role' => 'admin']);
+        $adminRole = Role::where('name', 'admin')->first();
+        $user = User::where('role_id', $adminRole?->id)->first() ?? User::factory()->create(['role_id' => $adminRole?->id]);
 
         // Scenario 1: The "Whale" (High Price)
         $this->comment("Simulating Scenario 1: High-Value Transaction...");
-        $order1 = Order::create([
+        $order1 = Loan::create([
             'user_id' => $user->id,
             'total_amount' => 45000.00,
             'shipping_address' => 'Hidden Bunker, Arctic Circle',
             'status' => 'pending',
             'payment_method' => 'card'
         ]);
-        $res1 = $fraudService->analyzeOrder($order1, '103.21.244.5');
+        $res1 = $fraudService->analyzeLoan($order1, '103.21.244.5');
         if ($res1['category'] === 'High' || $res1['score'] > 70) {
             $order1->update(['status' => 'flagged']);
             $this->line("   -> Result: FLAGGED (High Risk)");
@@ -36,14 +38,14 @@ class SimulateFraud extends Command
 
         // Scenario 2: Geolocation Mismatch
         $this->comment("Simulating Scenario 2: Geolocation Anomaly...");
-        $order2 = Order::create([
+        $order2 = Loan::create([
             'user_id' => $user->id,
             'total_amount' => 120.00,
             'shipping_address' => 'London, UK',
             'status' => 'pending',
             'payment_method' => 'card'
         ]);
-        $res2 = $fraudService->analyzeOrder($order2, '185.156.177.12');
+        $res2 = $fraudService->analyzeLoan($order2, '185.156.177.12');
         if ($res2['category'] === 'High' || $res2['score'] > 60) {
             $order2->update(['status' => 'flagged']);
             $this->line("   -> Result: FLAGGED (Risk detected)");
@@ -51,14 +53,14 @@ class SimulateFraud extends Command
 
         // Scenario 3: Normal Behavior
         $this->comment("Simulating Scenario 3: Legitimate Transaction...");
-        $order3 = Order::create([
+        $order3 = Loan::create([
             'user_id' => $user->id,
             'total_amount' => 35.50,
             'shipping_address' => '123 Main St, Local City',
             'status' => 'pending',
             'payment_method' => 'card'
         ]);
-        $res3 = $fraudService->analyzeOrder($order3, '127.0.0.1');
+        $res3 = $fraudService->analyzeLoan($order3, '127.0.0.1');
         $this->line("   -> Result: APPROVED (Low Risk)");
 
         $count = DB::table('ai_security_logs')->count();

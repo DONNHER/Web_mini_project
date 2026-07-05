@@ -11,13 +11,13 @@ use Carbon\Carbon;
 class ArchiveAuditLogs extends Command
 {
     protected $signature = 'audit:archive';
-    protected $description = 'Archive audit logs older than 1 year';
+    protected $description = 'Archive audit logs older than 90 days';
 
     public function handle()
     {
         $this->info('Archiving old audit logs...');
 
-        $cutoff = Carbon::now()->subYear();
+        $cutoff = Carbon::now()->subDays(90);
 
         $oldLogs = Audit::where('created_at', '<', $cutoff)->get();
 

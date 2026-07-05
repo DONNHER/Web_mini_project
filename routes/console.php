@@ -9,9 +9,34 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// --- 7. AUTOMATED BACKUP SYSTEM ---
+
+// 1. Weekly Database Backup - Sundays at 2:00 AM (Requirement 7.1)
+Schedule::command('backup:run --only-db')
+    ->weeklyOn(0, '02:00')
+    ->onSuccess(fn () => Log::info('Automated DB Backup Success'))
+    ->onFailure(fn () => Log::error('Automated DB Backup Failed'));
+
+// 2. Weekly File Uploads Backup - Sundays (Requirement 7.1)
+Schedule::command('backup:run --only-files')
+    ->weeklyOn(0, '04:00')
+    ->onSuccess(fn () => Log::info('File Uploads Backup Success'))
+    ->onFailure(fn () => Log::error('File Uploads Backup Failed'));
+
+// 3. Monthly Full System Backup (Requirement 7.1)
+Schedule::command('backup:run')
+    ->monthly()
+    ->onSuccess(fn () => Log::info('Monthly Full System Backup Success'))
+    ->onFailure(fn () => Log::error('Monthly Full System Backup Failed'));
+
 // --- 4.2.2 Maintenance Scheduling ---
 
 $logPath = storage_path('logs/scheduler.log');
+
+// System Health Check (Requirement 6.2)
+Schedule::command('system:health-check')
+    ->hourly()
+    ->onFailure(fn () => Log::error('Task Failure: system:health-check'));
 
 // Database only backup - daily
 Schedule::command('backup:run --only-db')
@@ -77,6 +102,14 @@ Schedule::command('report:generate-daily')
     ->onFailure(fn () => Log::error('Task Failure: report:generate-daily'))
     ->appendOutputTo($logPath);
 
+// Automated Monthly System Report Email (Requirement 8.2)
+Schedule::call(function () {
+    $configs = \App\Models\ReportConfiguration::where('is_scheduled', true)->where('schedule_frequency', 'monthly')->get();
+    foreach ($configs as $config) {
+        \App\Jobs\SendScheduledReport::dispatch($config->id);
+    }
+})->monthly();
+
 // Delete old notification records > 90 days
 Schedule::command('notification:prune')
     ->weekly()
@@ -85,12 +118,12 @@ Schedule::command('notification:prune')
     ->onFailure(fn () => Log::error('Task Failure: notification:prune'))
     ->appendOutputTo($logPath);
 
-// Archive audit logs > 1 year old
-Schedule::command('audit:archive')
-    ->monthly()
+// Auto-archive audit logs > 90 days old (Requirement 3.3)
+Schedule::command('logs:archive --days=90')
+    ->daily()
     ->withoutOverlapping()
-    ->onSuccess(fn () => Log::info('Task Success: audit:archive'))
-    ->onFailure(fn () => Log::error('Task Failure: audit:archive'))
+    ->onSuccess(fn () => Log::info('Task Success: logs:archive'))
+    ->onFailure(fn () => Log::error('Task Failure: logs:archive'))
     ->appendOutputTo($logPath);
 
 // Materialized Views for Reporting

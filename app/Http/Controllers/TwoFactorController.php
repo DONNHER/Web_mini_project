@@ -24,7 +24,7 @@ class TwoFactorController extends Controller
     {
         $user = Auth::user();
         $twoFactor = $user->twoFactorSecret;
-        
+
         return view('profile.two-factor', compact('user', 'twoFactor'));
     }
 
@@ -34,23 +34,23 @@ class TwoFactorController extends Controller
     public function enable(Request $request)
     {
         $user = Auth::user();
-        
+
         // Generate secret key
         $secret = $this->google2fa->generateSecretKey();
-        
+
         // Generate QR code
         $qrCode = $this->google2fa->getQRCodeInline(
             config('app.name'),
             $user->email,
             $secret
         );
-        
+
         // Generate recovery codes
         $recoveryCodes = [];
         for ($i = 0; $i < 8; $i++) {
             $recoveryCodes[] = Str::random(10);
         }
-        
+
         // Save to database
         $twoFactor = TwoFactorSecret::updateOrCreate(
             ['user_id' => $user->id],
@@ -60,7 +60,7 @@ class TwoFactorController extends Controller
                 'enabled' => false
             ]
         );
-        
+
         return view('profile.two-factor-enable', compact('qrCode', 'recoveryCodes', 'secret'));
     }
 
@@ -84,10 +84,10 @@ class TwoFactorController extends Controller
 
         if ($valid) {
             $twoFactor->update(['enabled' => true]);
-            
+
             // Send notification
             $user->notify(new \App\Notifications\TwoFactorEnabled());
-            
+
             return redirect()->route('profile.two-factor')
                 ->with('success', 'Two-factor authentication enabled successfully!');
         }
@@ -109,7 +109,7 @@ class TwoFactorController extends Controller
 
         if ($twoFactor) {
             $twoFactor->delete();
-            
+
             // Send notification
             $user->notify(new \App\Notifications\TwoFactorDisabled());
         }
@@ -136,8 +136,17 @@ class TwoFactorController extends Controller
         ]);
 
         $user = Auth::user();
-        $twoFactor = $user->twoFactorSecret;
 
+        // Check Email OTP
+        if ($user->otp_code && $user->otp_expires_at > now()) {
+            if ($user->otp_code === $request->code) {
+                $user->update(['otp_code' => null, 'otp_expires_at' => null]);
+                session(['2fa_verified' => true]);
+                return redirect()->intended('/');
+            }
+        }
+
+        $twoFactor = $user->twoFactorSecret;
         if (!$twoFactor || !$twoFactor->enabled) {
             return redirect()->intended('/');
         }
@@ -148,7 +157,7 @@ class TwoFactorController extends Controller
             // Remove used recovery code
             $recoveryCodes = array_diff($recoveryCodes, [$request->code]);
             $twoFactor->update(['recovery_codes' => json_encode(array_values($recoveryCodes))]);
-            
+
             session(['2fa_verified' => true]);
             return redirect()->intended('/');
         }

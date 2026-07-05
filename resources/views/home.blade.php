@@ -1,46 +1,51 @@
 @extends('layouts.app')
 
-@section('title', 'PageTurner - Online Bookstore')
+@section('title', 'LendingSystem - Financial Solutions')
 
 @section('content')
     <!-- Hero Section -->
-    <div class="bg-gray-800 text-white rounded-lg p-8 mb-8 border border-gray-700 shadow-xl">
-        <h1 class="text-4xl font-bold mb-4">Welcome to <span class="text-blue-400">PageTurner</span></h1>
-        <p class="text-xl text-gray-400 mb-6">Discover your next favorite book from our extensive collection.</p>
-        <a href="{{ route('books.index') }}"
-           class="bg-blue-400 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-500 transition shadow-lg inline-block">
-            Browse Books
-        </a>
+    <div class="bg-black/5 text-black rounded-3xl p-12 mb-12 border border-black/10 shadow-sm relative overflow-hidden">
+        <div class="relative z-10">
+            <h1 class="text-6xl font-black mb-4 uppercase tracking-tighter leading-none">Welcome to <br><span class="text-white">LendingSystem</span></h1>
+            <p class="text-xl font-bold mb-8 max-w-2xl opacity-70">Simple, transparent, and fast financial solutions for your personal and business needs.</p>
+            <a href="{{ route('loan_products.index') }}"
+               class="bg-black text-brand px-10 py-4 rounded-xl font-black hover:opacity-90 transition shadow-xl inline-block uppercase tracking-widest text-sm no-underline">
+                Explore Loan Products
+            </a>
+        </div>
+        <div class="absolute -right-20 -bottom-20 text-[20rem] font-black text-black/5 select-none pointer-events-none uppercase">LOAN</div>
     </div>
 
     <!-- Categories Section -->
-    <section class="mb-12">
-        <h2 class="text-2xl font-bold mb-6 text-white">Browse by Category</h2>
+    <section class="mb-16">
+        <h2 class="text-xs font-black mb-8 text-black uppercase tracking-[0.3em] opacity-40">Loan Categories</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @foreach($categories as $category)
-                <a href="{{ route('categories.show', $category) }}"
-                   class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 hover:border-blue-400 transition text-center group">
-                    <h3 class="font-semibold text-white group-hover:text-blue-400 transition">{{ $category->name }}</h3>
-                    <p class="text-sm text-gray-400">{{ $category->books_count }} books</p>
-                </a>
+                <div class="bg-black/5 p-8 rounded-2xl border border-black/5 hover:border-black/20 transition text-center group cursor-default">
+                    <h3 class="font-black text-black uppercase tracking-tight group-hover:scale-105 transition">{{ $category->name }}</h3>
+                    <p class="text-xs font-bold text-black/40 mt-2 uppercase">{{ $category->loan_products_count }} products</p>
+                </div>
             @endforeach
         </div>
     </section>
 
-    <!-- Featured Books Section -->
+    <!-- Featured Products Section -->
     <section>
-        <h2 class="text-2xl font-bold mb-6 text-white">Featured Books</h2>
+        <div class="flex justify-between items-end mb-8">
+            <h2 class="text-xs font-black text-black uppercase tracking-[0.3em] opacity-40">Featured Loan Products</h2>
+            <a href="{{ route('loan_products.index') }}" class="text-black font-black text-xs uppercase tracking-widest no-underline border-b-2 border-black pb-1 hover:opacity-60 transition">View All →</a>
+        </div>
 
-        @forelse($featuredBooks->chunk(4) as $chunk)
+        @if($featuredProducts->count() > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
-                @foreach($chunk as $book)
-                    <x-book-card :book="$book" />
+                @foreach($featuredProducts as $product)
+                    <x-loan-product-card :product="$product" />
                 @endforeach
             </div>
-        @empty
-            <div class="bg-gray-800 border-l-4 border-blue-400 p-4 text-gray-300">
-                <p>No books available at the moment. Check back soon!</p>
+        @else
+            <div class="bg-black/5 border-l-4 border-black p-6 text-black rounded-xl italic">
+                <p>No loan products available at the moment. Check back soon!</p>
             </div>
-        @endforelse
+        @endif
     </section>
 @endsection

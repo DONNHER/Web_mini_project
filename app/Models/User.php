@@ -4,21 +4,28 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 
+use App\Traits\HasPermissions;
+
 class User extends Authenticatable implements MustVerifyEmail, Auditable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasPermissions, SoftDeletes;
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',
+        'role_id',
         'tier',
+        'status',
+        'avatar',
+        'is_comaker',
+        'notification_preferences',
     ];
 
     protected $hidden = [
@@ -44,12 +51,14 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_comaker' => 'boolean',
+            'notification_preferences' => 'array',
         ];
     }
 
-    public function orders()
+    public function loans()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Loan::class);
     }
 
     public function reviews()
@@ -57,11 +66,6 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         return $this->hasMany(Review::class);
     }
 
-    // Helper method
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
-    }
 
     public function isVerified()
     {

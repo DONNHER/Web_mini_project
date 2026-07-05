@@ -8,9 +8,13 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Password;
 use App\Listeners\AuditSubscriber;
-use App\Models\Book;
-use App\Observers\BookObserver;
+use App\Listeners\LogErrorToAudit;
+use Illuminate\Log\Events\MessageLogged;
+use App\Models\LoanProduct;
+use App\Observers\LoanProductObserver;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,11 +31,31 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS in production (Requirement 11.5)
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         // Register Observers
-        Book::observe(BookObserver::class);
+        LoanProduct::observe(LoanProductObserver::class);
 
         // Register Audit Subscriber for authentication events
         Event::subscribe(AuditSubscriber::class);
+
+        // Register Error Logger
+        Event::listen(MessageLogged::class, LogErrorToAudit::class);
+
+        /**
+         * 2.7 Password Policy - Advanced Configuration
+         * Enforces min 8 chars, uppercase, lowercase, numbers, and special symbols
+         */
+        Password::defaults(function () {
+            return Password::min(8)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols();
+        });
 
         /**
          * Query Performance Logging
@@ -59,6 +83,10 @@ class AppServiceProvider extends ServiceProvider
         /**
          * 4.4 API Rate Limiting - Tiered Strategy (Intelligent Redis-backed)
          */
+        RateLimiter::for('global', function (Request $request) {
+            return Limit::perMinute(100)->by($request->ip());
+        });
+
         RateLimiter::for('api', function (Request $request) {
             $user = $request->user();
 
