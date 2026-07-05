@@ -59,14 +59,10 @@ RUN chown -R www-data:www-data \
     /var/www/html/storage \
     /var/www/html/bootstrap/cache
 
-# Optimizing Laravel
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
-
 # Expose port (Render uses 10000 by default, but Apache defaults to 80)
 # We will use a script to change Apache port to $PORT if provided
 RUN sed -i "s/80/\${PORT:-80}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
 # Production Entrypoint
-CMD ["apache2-foreground"]
+RUN chmod +x /var/www/html/start.sh
+ENTRYPOINT ["/var/www/html/start.sh"]

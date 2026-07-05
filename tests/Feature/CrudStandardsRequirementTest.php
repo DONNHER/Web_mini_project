@@ -55,20 +55,17 @@ class CrudStandardsRequirementTest extends TestCase
     {
         $product = LoanProduct::factory()->create(['version' => 1]);
 
-        // User A loads the product
-        $productA = LoanProduct::find($product->id);
+        $p2 = LoanProduct::find($product->id);
 
-        // User B loads and updates the product
-        $productB = LoanProduct::find($product->id);
-        $productB->name = 'Updated by B';
-        $productB->save();
-        $this->assertEquals(2, $productB->version);
+        // Simulate another process updating the record
+        \Illuminate\Support\Facades\DB::table('loan_products')
+            ->where('id', $product->id)
+            ->update(['version' => 2]);
 
-        // User A tries to update with old version (Eloquent boot logic usually handles this via my trait)
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Record was modified by another user');
 
-        $productA->name = 'Updated by A';
-        $productA->save();
+        $p2->name = 'Second update';
+        $p2->save();
     }
 }

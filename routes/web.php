@@ -80,6 +80,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::resource('loan-products', LoanProductController::class)->except(['index', 'show']);
+    Route::post('loan-products/{id}/restore', [LoanProductController::class, 'restore'])->name('loan-products.restore');
 
     // Admin loan management
     Route::get('/loans', [LoanController::class, 'adminIndex'])->name('loans.index');

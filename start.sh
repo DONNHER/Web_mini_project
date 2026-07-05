@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Create storage link
+php artisan storage:link
+
 # Cache configurations
 php artisan config:cache
 php artisan route:cache
