@@ -59,9 +59,6 @@
                 <a href="{{ url('/dashboard') }}" class="btn-primary no-underline">Launch Console</a>
             @else
                 <a href="{{ route('login') }}" class="btn-primary px-12 no-underline">Sign In</a>
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="btn-secondary px-12 bg-white no-underline">Create Account</a>
-                @endif
             @endauth
         </div>
 

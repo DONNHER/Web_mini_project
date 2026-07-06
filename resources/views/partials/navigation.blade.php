@@ -42,9 +42,6 @@
                         <a href="{{ route('login') }}" class="text-[#1A1A1A] hover:text-[#FF6B00] px-4 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">
                             Log In
                         </a>
-                        <a href="{{ route('register') }}" class="bg-[#FF6B00] text-white px-6 py-2.5 rounded-xl font-black hover:opacity-90 transition uppercase text-[10px] tracking-widest no-underline shadow-lg shadow-orange-500/20">
-                            Register
-                        </a>
                     @endguest
 
                     @auth

@@ -39,7 +39,7 @@
                     <p class="text-[#1A1A1A]/50 text-base font-semibold tracking-tight">Sign in to access your PIL dashboard</p>
                 </div>
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                <form method="POST" action="{{ route('login.post') }}" class="space-y-5">
                     @csrf
 
                     <!-- Email Address -->
@@ -80,11 +80,8 @@
                 <div class="mt-16">
                     <div class="relative flex items-center justify-center mb-8">
                         <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-[#FFEDD5]"></div></div>
-                        <span class="relative px-4 bg-[#FEF6F0] text-[10px] font-black text-[#1A1A1A]/30 uppercase tracking-[0.2em]">New to PIL?</span>
+                        <span class="relative px-4 bg-[#FEF6F0] text-[10px] font-black text-[#1A1A1A]/30 uppercase tracking-[0.2em]">Secure Portal</span>
                     </div>
-                    <a href="{{ route('register') }}" class="btn-secondary w-full flex items-center justify-center shadow-sm uppercase tracking-[0.2em] font-black text-xs">
-                        {{ __('Create an Account') }}
-                    </a>
                 </div>
             </div>
         </div>

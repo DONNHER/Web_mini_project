@@ -39,7 +39,7 @@
                     <p class="text-[#1A1A1A]/50 text-base font-semibold tracking-tight">Sign in to access your shareholder dashboard</p>
                 </div>
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                <form method="POST" action="{{ route('login.post') }}" class="space-y-5">
                     @csrf
 
                     <!-- Email Address -->

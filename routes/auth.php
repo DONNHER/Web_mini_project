@@ -19,14 +19,15 @@ Route::middleware('guest')->group(function () {
     Route::post('register', [RegisteredUserController::class, 'store'])
                 ->middleware('throttle:auth');
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-                ->name('login');
+    Route::get('admin-login', [AuthenticatedSessionController::class, 'create'])
+                ->name('admin.login');
 
     Route::get('shareholder-login', [AuthenticatedSessionController::class, 'createShareholder'])
-                ->name('shareholder.login');
+                ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store'])
-                ->middleware('throttle:auth');
+                ->middleware('throttle:auth')
+                ->name('login.post');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
                 ->name('password.request');
