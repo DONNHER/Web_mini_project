@@ -44,11 +44,11 @@
 
     /* Form Elements Override */
     input, select, textarea {
-        @apply bg-white border-brand-100 rounded-xl py-3 px-4 text-[#1A1A1A] font-medium !important;
+        @apply bg-white border-brand-100 rounded-xl py-3 px-4 text-[#1A1A1A] font-medium;
     }
 
     input:focus, select:focus, textarea:focus {
-        @apply border-brand ring-4 ring-brand/10 outline-none !important;
+        @apply border-brand ring-4 ring-brand/10 outline-none;
     }
 }
 
@@ -60,7 +60,6 @@
 
     .btn-primary {
         @apply bg-brand text-white rounded-2xl py-4 px-8 font-black uppercase tracking-widest text-xs inline-flex items-center justify-center transition-all duration-200 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand/40 active:scale-95;
-        border: none !important;
     }
 
     .btn-secondary {

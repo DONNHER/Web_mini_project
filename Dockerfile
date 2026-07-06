@@ -10,9 +10,9 @@ RUN npm run build
 # --- Stage 2: Final Production Image ---
 FROM php:8.4-apache
 
-# Allow Composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+# Use ENV key=value format to avoid legacy warnings
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 # 1. Install System Dependencies
 RUN apt-get update && apt-get install -y \
@@ -54,7 +54,7 @@ WORKDIR /var/www/html
 # Copy project files (respecting .dockerignore)
 COPY . .
 
-# Copy front-end build from Stage 1 (THIS IS THE FIX: Ensure correct path and permissions)
+# Copy front-end build from Stage 1
 COPY --from=frontend-builder /app/public/build ./public/build
 RUN chmod -R 755 public/build
 
