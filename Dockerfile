@@ -13,6 +13,12 @@ FROM php:8.4-apache
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
+# Fix Apache MPM conflict: Brute force clear all enabled MPMs
+# and explicitly enable ONLY prefork (required for mod_php)
+RUN rm -f /etc/apache2/mods-enabled/mpm_* && \
+    a2enmod mpm_prefork rewrite && \
+    echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Install System Dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
@@ -34,12 +40,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     bcmath \
     intl \
     opcache
-
-# Fix Apache MPM conflict: Brute force removal of conflicting MPMs
-# Official PHP images sometimes have mpm_event enabled in a way that needs manual cleanup
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
-    && rm -f /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf \
-    && a2enmod mpm_prefork rewrite
 
 # Configure Apache Document Root
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
