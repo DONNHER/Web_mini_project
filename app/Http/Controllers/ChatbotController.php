@@ -38,8 +38,9 @@ class ChatbotController extends Controller
         $prompt = $this->buildPrompt($userMessage, $history);
 
         try {
-            // Force Ollama for chat as per config
-            $response = $this->aiManager->generate($prompt, 'chat');
+            // Use fallback logic to ensure service continuity if local Ollama node is offline
+            $result = $this->aiManager->generateWithFallback($prompt, 'chat');
+            $response = $result['text'];
 
             // Add AI response to history
             $history[] = ['role' => 'assistant', 'content' => $response];
@@ -48,11 +49,12 @@ class ChatbotController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $response,
+                'provider' => $result['provider'] ?? 'unknown'
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Chatbot is currently resting. Please try again later.',
+                'message' => 'The neural network is currently offline. Please check local node status or fallback credentials.',
             ], 500);
         }
     }
