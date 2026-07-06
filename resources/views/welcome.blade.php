@@ -19,6 +19,19 @@
     </style>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Debug Info -->
+    @if(config('app.debug'))
+        <div style="position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.9); color: #0f0; padding: 10px; font-family: monospace; z-index: 9999; font-size: 10px; border: 1px solid #0f0;">
+            URL: {{ config('app.url') }}<br>
+            ENV: {{ config('app.env') }}<br>
+            SECURE: {{ request()->isSecure() ? 'YES' : 'NO' }}<br>
+            VITE_URL: {{ env('VITE_DEV_SERVER_URL') }}<br>
+            HOT_FILE: {{ file_exists(public_path('hot')) ? 'YES' : 'NO' }}<br>
+            MANIFEST: {{ file_exists(public_path('build/manifest.json')) ? 'YES' : 'NO' }}<br>
+            CSS: {{ Vite::asset('resources/css/app.css') }}
+        </div>
+    @endif
 </head>
 <body class="bg-cream font-sans antialiased min-h-screen flex flex-col items-center justify-center p-6 text-[#1A1A1A]">
     <!-- Background Decor -->

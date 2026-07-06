@@ -1,63 +1,101 @@
-<x-guest-layout>
-    <h1 class="text-3xl font-black text-black uppercase tracking-tighter mb-8 text-center">System <br><span class="text-white">Registry</span></h1>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PIL - Create Account</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-[#FEF6F0] font-sans antialiased text-[#1A1A1A]">
+    <!-- Background Decor -->
+    <div class="fixed top-0 right-0 w-80 h-80 bg-[#FFEDD5] rounded-full -mr-20 -mt-20 blur-3xl opacity-60"></div>
+    <div class="fixed bottom-0 left-0 w-80 h-80 bg-[#FFEDD5] rounded-full -ml-20 -mb-20 blur-3xl opacity-60"></div>
 
-    <form method="POST" action="{{ route('register') }}" class="space-y-6">
-        @csrf
-
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Full Name')" :required="true" />
-            <x-text-input id="name" class="block mt-1 w-full bg-white/20 border-black/10 text-black font-bold" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Access Identifier (Email)')" :required="true" />
-            <x-text-input id="email" class="block mt-1 w-full bg-white/20 border-black/10 text-black font-bold" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Security Token (Password)')" :required="true" />
-
-            <x-text-input id="password" class="block mt-1 w-full bg-white/20 border-black/10 text-black font-bold"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div>
-            <x-input-label for="password_confirmation" :value="__('Confirm Token')" :required="true" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full bg-white/20 border-black/10 text-black font-bold"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex flex-col space-y-6 pt-4">
-            <button type="submit" class="w-full bg-black text-brand py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:opacity-90 transition shadow-xl flex items-center justify-center space-x-2">
-                <span>{{ __('Initialize Account') }}</span>
-                <svg class="loading-spinner hidden animate-spin h-4 w-4 text-brand" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </button>
-
-            <div class="text-center border-t border-black/5 pt-6">
-                <p class="text-[10px] font-black uppercase tracking-widest text-black/40">
-                    {{ __('Already have an access key?') }}
-                    <a href="{{ route('login') }}" class="text-black font-black hover:opacity-60 transition ml-2 no-underline border-b-2 border-black">
-                        {{ __('Sign In') }}
-                    </a>
-                </p>
+    <div class="flex min-h-screen relative z-10">
+        <!-- Left Side: Logo & Brand -->
+        <div class="hidden lg:flex w-1/2 items-center justify-center border-r border-[#FFEDD5]">
+            <div class="text-center">
+                <div class="logo-box mx-auto mb-6">
+                    <span class="text-white font-black text-2xl tracking-tighter">PIL</span>
+                </div>
+                <h2 class="text-[#FF6B00] font-black text-4xl mb-2 uppercase tracking-tighter">PIL</h2>
+                <p class="text-[#1A1A1A]/40 text-xs font-black uppercase tracking-[0.4em]">Point of Sale and Lending System</p>
             </div>
         </div>
-    </form>
-</x-guest-layout>
+
+        <!-- Right Side: Form Content -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-20">
+            <div class="max-w-md w-full">
+                <!-- Mobile Logo -->
+                <div class="lg:hidden text-center mb-12">
+                    <div class="logo-box mx-auto mb-4 w-16 h-16">
+                        <span class="text-white font-black text-xl tracking-tighter">PIL</span>
+                    </div>
+                    <h2 class="text-[#FF6B00] font-black text-xl mb-1 uppercase tracking-tighter">PIL</h2>
+                </div>
+
+                <div class="text-left mb-10">
+                    <h1 class="text-4xl font-black text-[#1A1A1A] tracking-tight mb-3">Join the Platform</h1>
+                    <p class="text-[#1A1A1A]/50 text-base font-semibold tracking-tight">Create your PIL infrastructure account</p>
+                </div>
+
+                <form method="POST" action="{{ route('register') }}" class="space-y-5">
+                    @csrf
+
+                    <!-- Name -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#1A1A1A]/30">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <input id="name" type="text" name="name" value="{{ old('name') }}" placeholder="Full Name" required autofocus autocomplete="name" class="w-full pl-12 border-[#FFEDD5] focus:border-[#FF6B00] focus:ring-0 rounded-2xl py-4 font-semibold text-[#1A1A1A] shadow-sm">
+                        <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                    </div>
+
+                    <!-- Email Address -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#1A1A1A]/30">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="Email Address" required autocomplete="username" class="w-full pl-12 border-[#FFEDD5] focus:border-[#FF6B00] focus:ring-0 rounded-2xl py-4 font-semibold text-[#1A1A1A] shadow-sm">
+                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    </div>
+
+                    <!-- Password -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#1A1A1A]/30">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </div>
+                        <input id="password" type="password" name="password" placeholder="Security Token (Password)" required autocomplete="new-password" class="w-full pl-12 border-[#FFEDD5] focus:border-[#FF6B00] focus:ring-0 rounded-2xl py-4 font-semibold text-[#1A1A1A] shadow-sm">
+                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#1A1A1A]/30">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944V12m0 0l4 4m-4-4l-4 4"></path></svg>
+                        </div>
+                        <input id="password_confirmation" type="password" name="password_confirmation" placeholder="Confirm Token" required autocomplete="new-password" class="w-full pl-12 border-[#FFEDD5] focus:border-[#FF6B00] focus:ring-0 rounded-2xl py-4 font-semibold text-[#1A1A1A] shadow-sm">
+                        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                    </div>
+
+                    <button type="submit" class="btn-primary w-full shadow-lg mt-4 uppercase tracking-[0.2em] font-black text-xs">
+                        {{ __('Initialize Account') }}
+                    </button>
+                </form>
+
+                <div class="mt-12">
+                    <div class="relative flex items-center justify-center mb-8">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-[#FFEDD5]"></div></div>
+                        <span class="relative px-4 bg-[#FEF6F0] text-[10px] font-black text-[#1A1A1A]/30 uppercase tracking-[0.2em]">Already have access?</span>
+                    </div>
+                    <a href="{{ route('login') }}" class="btn-secondary w-full flex items-center justify-center shadow-sm uppercase tracking-[0.2em] font-black text-xs">
+                        {{ __('Sign In to Terminal') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
