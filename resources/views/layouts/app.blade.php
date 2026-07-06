@@ -13,6 +13,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>[x-cloak] { display: none !important; }</style>
     @stack('styles')
 </head>
 <body class="font-sans antialiased bg-[#FEF6F0] text-[#1A1A1A]">
@@ -49,14 +50,43 @@
                 const response = await fetch('{{ route("notifications.unread") }}');
                 const data = await response.json();
                 const countBadge = document.getElementById('notification-count');
+                const listContainer = document.getElementById('notification-list');
+
                 if (data.unread_count > 0) {
                     countBadge.innerText = data.unread_count;
                     countBadge.classList.remove('hidden');
                 } else {
                     countBadge.classList.add('hidden');
                 }
+
+                // If we have notification data, we could render it here
+                if (data.notifications && data.notifications.length > 0) {
+                    listContainer.innerHTML = data.notifications.map(n => `
+                        <div class="p-4 border-b border-[#FFEDD5] hover:bg-[#FEF6F0] transition">
+                            <p class="text-[10px] font-bold text-[#1A1A1A]">${n.data.message || 'Notification'}</p>
+                            <p class="text-[8px] text-[#1A1A1A]/40 mt-1">${new Date(n.created_at).toLocaleString()}</p>
+                        </div>
+                    `).join('');
+                }
             } catch (error) { console.error(error); }
         }
+
+        async function markAllNotificationsRead() {
+            try {
+                const response = await fetch('{{ route("notifications.mark-all-read") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    document.getElementById('notification-count').classList.add('hidden');
+                    document.getElementById('notification-list').innerHTML = '<p class="p-8 text-center text-[#1A1A1A]/30 text-[10px] font-bold uppercase tracking-widest italic">No new events</p>';
+                }
+            } catch (error) { console.error(error); }
+        }
+
         setInterval(fetchNotifications, 30000);
         window.addEventListener('load', fetchNotifications);
 
