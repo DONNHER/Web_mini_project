@@ -20,8 +20,7 @@
                 <div class="logo-box mx-auto mb-6">
                     <span class="text-white font-black text-2xl tracking-tighter">PIL</span>
                 </div>
-                <h2 class="text-[#FF6B00] font-black text-4xl mb-2 uppercase tracking-tighter">PIL</h2>
-                <p class="text-[#1A1A1A]/40 text-xs font-black uppercase tracking-[0.4em]">Point of Sale and Lending System</p>
+                <p class="text-[#1A1A1A]/40 text-[9px] font-black uppercase tracking-[0.4em]">Point of Sale and Lending System</p>
             </div>
         </div>
 
@@ -33,7 +32,6 @@
                     <div class="logo-box mx-auto mb-4 w-16 h-16">
                         <span class="text-white font-black text-xl tracking-tighter">PIL</span>
                     </div>
-                    <h2 class="text-[#FF6B00] font-black text-xl mb-1 uppercase tracking-tighter">PIL</h2>
                 </div>
 
                 <div class="text-left mb-10">
