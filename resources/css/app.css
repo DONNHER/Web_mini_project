@@ -1,40 +1,55 @@
 @import "tailwindcss";
 
 @theme {
-    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-    --color-brand: #FF6B00;
-    --color-brand-50: #FFF7ED;
-    --color-brand-100: #FFEDD5;
-    --color-brand-500: #FF6B00;
+  --color-brand: #FF6B00;
+  --color-brand-50: #FFF7ED;
+  --color-brand-100: #FFEDD5;
+  --color-brand-200: #FED7AA;
+  --color-brand-300: #FDBA74;
+  --color-brand-400: #FB923C;
+  --color-brand-500: #FF6B00;
+  --color-brand-600: #EA580C;
+  --color-brand-700: #C2410C;
+  --color-brand-800: #9A3412;
+  --color-brand-900: #7C2D12;
 
-    --color-cream: #FEF6F0;
+  --color-cream: #FEF6F0;
 }
 
 @layer base {
-    body {
-        background-color: #FEF6F0;
-        color: #1A1A1A;
-        @apply font-sans antialiased;
-    }
+  body {
+    background-color: #FEF6F0;
+    color: #1A1A1A;
+    @apply font-sans antialiased;
+  }
 }
 
 @layer components {
-    .card {
-        @apply bg-white rounded-[2rem] border border-brand/5 shadow-xl shadow-brand/5;
-    }
+  .card {
+    @apply bg-white border border-brand/5 shadow-xl shadow-brand/5;
+    border-radius: 2rem;
+  }
 
-    .btn-primary {
-        @apply bg-brand text-white rounded-2xl py-4 px-8 font-black uppercase tracking-widest text-xs inline-flex items-center justify-center transition-all duration-200;
-    }
+  .btn-primary {
+    @apply bg-brand text-white font-black uppercase tracking-widest text-xs inline-flex items-center justify-center transition-all duration-200;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+  }
 
-    .btn-secondary {
-        @apply bg-white text-brand border border-brand rounded-2xl py-4 px-8 font-black uppercase tracking-widest text-xs inline-flex items-center justify-center transition-all duration-200;
-    }
+  .btn-secondary {
+    @apply bg-white text-brand border border-brand font-black uppercase tracking-widest text-xs inline-flex items-center justify-center transition-all duration-200;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+  }
 
-    .logo-box {
-        @apply w-20 h-20 rounded-3xl flex items-center justify-center;
-        background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
-        box-shadow: 0 10px 25px -5px rgba(255, 107, 0, 0.4);
-    }
+  .logo-box {
+    @apply flex items-center justify-center;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
+    box-shadow: 0 10px 25px -5px rgba(255, 107, 0, 0.4);
+  }
 }
