@@ -30,13 +30,13 @@
                 <div class="md:col-span-2">
                     <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]/40 mb-3">Omni Search</label>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Scan identity matrix..."
-                           class="w-full bg-[#FEF6F0] border-none rounded-xl px-6 py-4 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 placeholder-[#1A1A1A]/20">
+                           class="w-full bg-[#FEF6F0] border-none rounded-xl px-8 py-4 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 placeholder-[#1A1A1A]/20 outline-none">
                 </div>
 
                 <!-- Status Filter -->
                 <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]/40 mb-3">Integrity</label>
-                    <select name="status" class="w-full bg-[#FEF6F0] border-none rounded-xl px-6 py-4 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                    <select name="status" class="w-full bg-[#FEF6F0] border-none rounded-xl px-8 py-4 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
                         <option value="">Matrix: All</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -47,7 +47,7 @@
                 <!-- Role Filter -->
                 <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]/40 mb-3">Authority</label>
-                    <select name="role_id" class="w-full bg-[#FEF6F0] border-none rounded-xl px-6 py-4 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                    <select name="role_id" class="w-full bg-[#FEF6F0] border-none rounded-xl px-8 py-4 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
                         <option value="">Matrix: All</option>
                         @foreach($roles as $role)
                             <option value="{{ $role->id }}" {{ request('role_id') == $role->id ? 'selected' : '' }}>{{ $role->display_name }}</option>
@@ -58,7 +58,7 @@
                 <!-- Per Page -->
                 <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]/40 mb-3">Density</label>
-                    <select name="per_page" class="w-full bg-[#FEF6F0] border-none rounded-xl px-6 py-4 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                    <select name="per_page" class="w-full bg-[#FEF6F0] border-none rounded-xl px-8 py-4 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10 / Cycle</option>
                         <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25 / Cycle</option>
                         <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 / Cycle</option>

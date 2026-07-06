@@ -27,7 +27,7 @@
         <form action="{{ route('admin.audit-logs.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
             <div>
                 <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Operator</label>
-                <select name="user_id" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                <select name="user_id" class="w-full bg-[#FEF6F0] border-none rounded-xl px-8 py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
                     <option value="">Matrix: All</option>
                     @foreach($users as $id => $name)
                         <option value="{{ $id }}" {{ request('user_id') == $id ? 'selected' : '' }}>
@@ -39,7 +39,7 @@
 
             <div>
                 <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Asset Class</label>
-                <select name="auditable_type" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                <select name="auditable_type" class="w-full bg-[#FEF6F0] border-none rounded-xl px-8 py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
                     <option value="">Matrix: All</option>
                     @foreach($modelTypes as $type => $label)
                         <option value="{{ $type }}" {{ request('auditable_type') == $type ? 'selected' : '' }}>
@@ -51,7 +51,7 @@
 
             <div>
                 <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Event Logic</label>
-                <select name="event" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                <select name="event" class="w-full bg-[#FEF6F0] border-none rounded-xl px-8 py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
                     <option value="">Matrix: All</option>
                     @foreach($events as $event)
                         <option value="{{ $event }}" {{ request('event') == $event ? 'selected' : '' }}>
@@ -63,12 +63,12 @@
 
             <div>
                 <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Temporal Start</label>
-                <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full bg-[#FEF6F0] border-none rounded-xl px-8 py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
             </div>
 
             <div>
                 <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Temporal End</label>
-                <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full bg-[#FEF6F0] border-none rounded-xl px-8 py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
             </div>
 
             <div class="md:col-span-3 lg:col-span-5 flex justify-end items-center space-x-6 pt-4">

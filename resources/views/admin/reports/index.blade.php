@@ -55,7 +55,7 @@
                 <!-- Select Report Type -->
                 <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]/40 mb-4">Intelligence Engine</label>
-                    <select name="report_type" id="report_type" class="w-full bg-[#FEF6F0] border-none rounded-2xl py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm">
+                    <select name="report_type" id="report_type" class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm">
                         <option value="user_activity">User Activity Matrix</option>
                         <option value="transaction_summary">Asset Transaction Ledger</option>
                         <option value="audit_trail">Full Security Audit Trail</option>
@@ -66,7 +66,7 @@
                 <!-- Select Output Format -->
                 <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]/40 mb-4">Export Protocol</label>
-                    <select name="format" class="w-full bg-[#FEF6F0] border-none rounded-2xl py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm">
+                    <select name="format" class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm">
                         <option value="pdf">Secured PDF Document</option>
                         <option value="xlsx">Excel Data Matrix (.XLSX)</option>
                         <option value="csv">Raw Data Stream (.CSV)</option>
@@ -77,8 +77,8 @@
                 <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]/40 mb-4">Temporal Window</label>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="date" name="date_from" class="bg-[#FEF6F0] border-none rounded-2xl py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-[10px]">
-                        <input type="date" name="date_to" class="bg-[#FEF6F0] border-none rounded-2xl py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-[10px]">
+                        <input type="date" name="date_from" class="bg-[#FEF6F0] border-none rounded-2xl px-8 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-[10px]">
+                        <input type="date" name="date_to" class="bg-[#FEF6F0] border-none rounded-2xl px-8 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-[10px]">
                     </div>
                 </div>
             </div>

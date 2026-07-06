@@ -39,7 +39,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <div>
                         <x-input-label for="role_id" :value="__('Authority Role')" />
-                        <select name="role_id" id="role_id" class="w-full bg-[#FEF6F0] border-none rounded-2xl py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm mt-3">
+                        <select name="role_id" id="role_id" class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm mt-3">
                             @foreach($roles as $role)
                                 <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>{{ $role->display_name }}</option>
                             @endforeach
@@ -47,7 +47,7 @@
                     </div>
                     <div>
                         <x-input-label for="status" :value="__('Integrity Status')" />
-                        <select name="status" id="status" class="w-full bg-[#FEF6F0] border-none rounded-2xl py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm mt-3">
+                        <select name="status" id="status" class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm mt-3">
                             <option value="active" {{ $user->status == 'active' ? 'selected' : '' }}>Active</option>
                             <option value="inactive" {{ $user->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
                             <option value="suspended" {{ $user->status == 'suspended' ? 'selected' : '' }}>Suspended</option>

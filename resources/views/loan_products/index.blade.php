@@ -32,11 +32,11 @@
                        name="search"
                        value="{{ request('search') }}"
                        placeholder="Scan asset names..."
-                       class="w-full bg-[#FEF6F0] border-none rounded-2xl pl-14 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 placeholder-[#1A1A1A]/20">
+                       class="w-full bg-[#FEF6F0] border-none rounded-2xl pl-14 pr-6 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 placeholder-[#1A1A1A]/20">
             </div>
 
             <div class="w-full md:w-64">
-                <select name="category" class="w-full bg-[#FEF6F0] border-none rounded-2xl py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5">
+                <select name="category" class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5">
                     <option value="">Matrix: All</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>

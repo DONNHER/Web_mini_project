@@ -45,7 +45,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div>
                     <x-input-label for="role_id" :value="__('Authority Level')" :required="true" />
-                    <select name="role_id" id="role_id" class="w-full bg-[#FEF6F0] border-none rounded-2xl py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm mt-3" required>
+                    <select name="role_id" id="role_id" class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm mt-3" required>
                         @foreach($roles as $role)
                             <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->display_name }}</option>
                         @endforeach
@@ -53,7 +53,7 @@
                 </div>
                 <div>
                     <x-input-label for="status" :value="__('Matrix Status')" :required="true" />
-                    <select name="status" id="status" class="w-full bg-[#FEF6F0] border-none rounded-2xl py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm mt-3" required>
+                    <select name="status" id="status" class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-4 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-sm mt-3" required>
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                         <option value="suspended">Suspended</option>
