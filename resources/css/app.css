@@ -1,104 +1,74 @@
 @import "tailwindcss";
-@config "../../tailwind.config.js";
+
+/* Explicitly tell Tailwind 4 where to scan for classes */
+@source "../../resources/views/**/*.blade.php";
+@source "../../app/Http/Controllers/**/*.php";
+@source "../../app/View/Components/**/*.php";
+
+@theme {
+    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+    --color-brand: #FF6B00;
+    --color-brand-50: #FFF7ED;
+    --color-brand-100: #FFEDD5;
+    --color-brand-200: #FED7AA;
+    --color-brand-300: #FDBA74;
+    --color-brand-400: #FB923C;
+    --color-brand-500: #FF6B00;
+    --color-brand-600: #EA580C;
+    --color-brand-700: #C2410C;
+    --color-brand-800: #9A3412;
+    --color-brand-900: #7C2D12;
+
+    --color-cream: #FEF6F0;
+
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-3xl: 2rem;
+}
 
 @layer base {
     body {
+        @apply bg-cream text-[#1A1A1A] font-sans antialiased;
         background-color: #FEF6F0 !important;
-        color: #1A1A1A;
-        font-family: 'Instrument Sans', sans-serif;
     }
 
-    /* Links */
+    /* Standard Links */
     a {
-        color: #FF6B00;
-        text-decoration: none;
-        transition: all 0.2s ease;
+        @apply text-brand no-underline transition-all duration-200;
     }
 
     a:hover {
-        opacity: 0.8;
+        @apply opacity-80;
     }
 
-    /* Form Elements */
+    /* Form Elements Override */
     input, select, textarea {
-        background-color: #FFFFFF !important;
-        border: 1px solid #FFEDD5 !important;
-        border-radius: 1rem !important;
-        padding: 0.75rem 1rem !important;
-        color: #1A1A1A !important;
-        font-weight: 500 !important;
+        @apply bg-white border-brand-100 rounded-xl py-3 px-4 text-[#1A1A1A] font-medium !important;
     }
 
     input:focus, select:focus, textarea:focus {
-        border-color: #FF6B00 !important;
-        box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1) !important;
-        outline: none !important;
+        @apply border-brand ring-4 ring-brand/10 outline-none !important;
     }
+}
 
-    input::placeholder {
-        color: #A1A1A1 !important;
-        font-weight: 400 !important;
-    }
-
-    /* Cards */
+/* Custom PIL Components */
+@layer components {
     .card {
-        background-color: #FFFFFF;
-        border-radius: 1.5rem;
-        border: 1px solid rgba(255, 107, 0, 0.05);
-        box-shadow: 0 4px 20px -2px rgba(255, 107, 0, 0.05);
+        @apply bg-white rounded-3xl border border-brand-100 shadow-xl shadow-brand/5 transition-all duration-300;
     }
-}
 
-/* Custom Theme Classes */
-.bg-brand { background-color: #FF6B00 !important; }
-.text-brand { color: #FF6B00 !important; }
-.border-brand { border-color: #FF6B00 !important; }
+    .btn-primary {
+        @apply bg-brand text-white rounded-2xl py-4 px-8 font-black uppercase tracking-widest text-xs inline-flex items-center justify-center transition-all duration-200 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand/40 active:scale-95;
+        border: none !important;
+    }
 
-.btn-primary {
-    background-color: #FF6B00 !important;
-    color: #FFFFFF !important;
-    border-radius: 1rem !important;
-    padding: 1rem 2rem !important;
-    font-weight: 800 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    border: none !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-}
+    .btn-secondary {
+        @apply bg-white text-brand border border-brand rounded-2xl py-4 px-8 font-black uppercase tracking-widest text-xs inline-flex items-center justify-center transition-all duration-200;
+    }
 
-.btn-primary:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 10px 20px -5px rgba(255, 107, 0, 0.4) !important;
-}
-
-.btn-secondary {
-    background-color: #FFFFFF !important;
-    color: #FF6B00 !important;
-    border: 1px solid #FF6B00 !important;
-    border-radius: 1rem !important;
-    padding: 1rem 2rem !important;
-    font-weight: 800 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-}
-
-/* Auth Screens */
-.auth-container {
-    max-width: 450px;
-    width: 100%;
-}
-
-.logo-box {
-    background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
-    width: 80px;
-    height: 80px;
-    border-radius: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 25px -5px rgba(255, 107, 0, 0.4);
-    margin: 0 auto 1.5rem;
+    .logo-box {
+        @apply w-20 h-20 rounded-3xl flex items-center justify-center shadow-2xl shadow-brand/40;
+        background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
+    }
 }

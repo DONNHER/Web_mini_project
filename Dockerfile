@@ -4,6 +4,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+# Run build and ensure it succeeded
 RUN npm run build
 
 # --- Stage 2: Final Production Image ---
@@ -50,17 +51,18 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy project files
+# Copy project files (respecting .dockerignore)
 COPY . .
 
-# Copy front-end build from Stage 1
+# Copy front-end build from Stage 1 (THIS IS THE FIX: Ensure correct path and permissions)
 COPY --from=frontend-builder /app/public/build ./public/build
+RUN chmod -R 755 public/build
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Set permissions for Laravel
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public/build
 
 # Production Entrypoint
 RUN chmod +x /var/www/html/start.sh

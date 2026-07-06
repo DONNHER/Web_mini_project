@@ -7,6 +7,7 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        './app/Http/Controllers/**/*.php',
     ],
 
     theme: {
@@ -28,10 +29,14 @@ export default {
                     800: '#9A3412',
                     900: '#7C2D12',
                 },
-                cream: {
-                    DEFAULT: '#FEF6F0',
-                }
+                cream: '#FEF6F0',
             },
+            borderRadius: {
+                '3xl': '1.5rem',
+            },
+            boxShadow: {
+                '2xl': '0 25px 50px -12px rgba(255, 107, 0, 0.25)',
+            }
         },
     },
 

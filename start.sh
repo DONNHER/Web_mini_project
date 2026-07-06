@@ -34,6 +34,13 @@ php artisan view:cache || echo "Blade caching skipped."
 echo "📊 Running database migrations..."
 php artisan migrate --force
 
+# Verify Vite Assets
+if [ -f public/build/manifest.json ]; then
+    echo "📦 Vite build manifest found."
+else
+    echo "⚠️ WARNING: Vite build manifest not found at public/build/manifest.json"
+fi
+
 echo "✅ Deployment successful. Starting Apache..."
 
 # Start Apache
