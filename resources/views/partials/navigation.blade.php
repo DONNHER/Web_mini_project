@@ -54,7 +54,7 @@
                                 <span id="notification-count" class="hidden absolute top-1.5 right-1.5 bg-[#FF6B00] text-white text-[7px] font-black px-1 py-0.5 rounded-full ring-2 ring-white">0</span>
                             </button>
 
-                            <div x-show="open" x-transition class="absolute right-0 mt-4 w-80 bg-white border border-[#FFEDD5] rounded-2xl shadow-2xl z-50 overflow-hidden">
+                            <div x-show="open" x-cloak x-transition class="absolute right-0 mt-4 w-80 bg-white border border-[#FFEDD5] rounded-2xl shadow-2xl z-50 overflow-hidden">
                                 <div class="p-4 border-b border-[#FFEDD5] flex justify-between items-center bg-[#FEF6F0]/50">
                                     <h3 class="text-[#1A1A1A] font-black text-[10px] uppercase tracking-widest">Feed</h3>
                                     <button onclick="markAllNotificationsRead()" class="text-[8px] text-[#FF6B00] font-black uppercase no-underline hover:underline">Clear</button>
