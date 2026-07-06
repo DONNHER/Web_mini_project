@@ -7,7 +7,6 @@
                     <div class="bg-[#FF6B00] w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
                         <span class="text-white font-black text-xs tracking-tighter">PIL</span>
                     </div>
-                    <span class="ml-3 text-xl font-black text-[#1A1A1A] uppercase tracking-tighter">PIL</span>
                 </a>
 
                 <!-- Navigation Links -->
@@ -54,7 +53,7 @@
                                 <span id="notification-count" class="hidden absolute top-1.5 right-1.5 bg-[#FF6B00] text-white text-[7px] font-black px-1 py-0.5 rounded-full ring-2 ring-white">0</span>
                             </button>
 
-                            <div x-show="notificationsOpen" x-cloak class="absolute right-0 mt-4 w-80 bg-white border border-[#FFEDD5] rounded-2xl shadow-2xl z-50 overflow-hidden" style="display: none;">
+                            <div x-show="notificationsOpen" x-cloak class="absolute right-0 mt-4 w-80 bg-white border border-[#FFEDD5] rounded-2xl shadow-2xl z-50 overflow-hidden">
                                 <div class="p-4 border-b border-[#FFEDD5] flex justify-between items-center bg-[#FEF6F0]/50">
                                     <h3 class="text-[#1A1A1A] font-black text-[10px] uppercase tracking-widest">Feed</h3>
                                     <button onclick="markAllNotificationsRead()" class="text-[8px] text-[#FF6B00] font-black uppercase no-underline hover:underline">Clear</button>

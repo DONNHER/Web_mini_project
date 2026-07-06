@@ -1,60 +1,61 @@
 @extends('layouts.app')
 
-@section('title', 'Profile Settings - PageTurner')
+@section('title', 'Profile')
 
 @section('header')
-    <h2 class="font-bold text-xl text-white leading-tight">
-        {{ __('Profile Settings') }}
-    </h2>
+    <div>
+        <span class="text-[#FF6B00] font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">Personal Registry</span>
+        <h1 class="text-5xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Security <span class="text-[#FF6B00]">Profile</span></h1>
+    </div>
 @endsection
 
 @section('content')
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-12 space-y-10">
+        <div class="max-w-7xl mx-auto space-y-10">
             <!-- Profile Information -->
-            <div class="p-4 sm:p-8 bg-gray-800 shadow-xl border border-gray-700 sm:rounded-lg">
-                <div class="max-w-xl text-white">
+            <div class="card p-10">
+                <div class="max-w-xl">
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </div>
 
             <!-- Update Password -->
-            <div class="p-4 sm:p-8 bg-gray-800 shadow-xl border border-gray-700 sm:rounded-lg">
-                <div class="max-w-xl text-white">
+            <div class="card p-10">
+                <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
 
             <!-- Browser Sessions -->
-            <div class="p-4 sm:p-8 bg-gray-800 shadow-xl border border-gray-700 sm:rounded-lg">
-                <div class="max-w-xl text-white">
+            <div class="card p-10">
+                <div class="max-w-xl">
                     @include('profile.partials.logout-other-browser-sessions-form')
                 </div>
             </div>
 
             <!-- Two Factor Authentication -->
-            <div class="p-4 sm:p-8 bg-gray-800 shadow-xl border border-gray-700 sm:rounded-lg">
-                <div class="max-w-xl text-white">
-                    <h2 class="text-lg font-medium text-white">
+            <div class="card p-10">
+                <div class="max-w-xl">
+                    <h2 class="text-2xl font-black uppercase tracking-tighter text-[#1A1A1A]">
                         {{ __('Security & Notifications') }}
                     </h2>
-                    <p class="mt-1 text-sm text-gray-400">
-                        {{ __('Manage your two-factor authentication and alert preferences.') }}
+                    <p class="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]/40 leading-relaxed">
+                        {{ __('Manage your two-factor authentication and alert preferences for maximum account integrity.') }}
                     </p>
-                    <div class="mt-6 flex space-x-4">
-                        <a href="{{ route('profile.two-factor') }}" class="inline-flex items-center px-4 py-2 bg-blue-400 border border-transparent rounded-md font-bold text-xs text-white uppercase tracking-widest hover:bg-blue-500 focus:bg-blue-500 active:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-[0_0_15px_rgba(96,165,250,0.3)]">
+                    <div class="mt-8 flex space-x-4">
+                        <a href="{{ route('profile.two-factor') }}" class="btn-primary no-underline">
                             {{ __('Manage 2FA') }}
                         </a>
-                        <a href="{{ route('profile.notifications') }}" class="inline-flex items-center px-4 py-2 bg-gray-700 border border-gray-600 rounded-md font-bold text-xs text-white uppercase tracking-widest hover:bg-gray-600 transition ease-in-out duration-150">
-                            {{ __('Notification Settings') }}
+                        <a href="{{ route('profile.notifications') }}" class="btn-secondary no-underline">
+                            {{ __('Alert Matrix') }}
                         </a>
                     </div>
                 </div>
             </div>
 
             <!-- Delete User -->
-            <div class="p-4 sm:p-8 bg-gray-800 shadow-xl border border-gray-700 sm:rounded-lg">
-                <div class="max-w-xl text-white">
+            <div class="card p-10 border-red-500/20">
+                <div class="max-w-xl">
                     @include('profile.partials.delete-user-form')
                 </div>
             </div>

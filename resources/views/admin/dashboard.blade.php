@@ -1,18 +1,21 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard - LendingSystem')
+@section('title', 'Admin Dashboard')
 
 @section('header')
-    <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-white tracking-tight">Admin Dashboard</h1>
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <span class="text-[#FF6B00] font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">Control Matrix</span>
+            <h1 class="text-5xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Command <span class="text-[#FF6B00]">Center</span></h1>
+        </div>
         <div class="flex space-x-3">
-            <button id="refresh-dashboard" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition font-bold text-xs uppercase tracking-widest border border-gray-600">
-                Refresh Data
+            <button id="refresh-dashboard" class="btn-secondary px-6">
+                Recalibrate Data
             </button>
             <form action="{{ route('admin.dashboard.backup') }}" method="POST">
                 @csrf
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-bold text-xs uppercase tracking-widest shadow-lg">
-                    Run Backup
+                <button type="submit" class="btn-primary px-6">
+                    Archive Registry
                 </button>
             </form>
         </div>
@@ -20,77 +23,84 @@
 @endsection
 
 @section('content')
-<div class="space-y-8" id="dashboard-app">
+<div class="space-y-12" id="dashboard-app">
     <!-- Top Stats Row -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg">
-            <p class="text-gray-400 text-xs font-bold uppercase tracking-widest">Total Users</p>
-            <div class="flex items-end justify-between">
-                <p class="text-3xl font-black text-white mt-1" id="stat-totalUsers">{{ $totalUsers }}</p>
-                <p class="text-green-500 text-xs font-bold mb-1"><span id="stat-activeNow">{{ $activeNow }}</span> Active Now</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="card p-8">
+            <p class="text-[#1A1A1A]/40 text-[10px] font-black uppercase tracking-widest">Total Nodes</p>
+            <div class="flex items-end justify-between mt-2">
+                <p class="text-4xl font-black text-[#1A1A1A] tracking-tighter" id="stat-totalUsers">{{ $totalUsers }}</p>
+                <p class="text-green-600 text-[10px] font-black uppercase tracking-widest mb-1"><span id="stat-activeNow">{{ $activeNow }}</span> Active</p>
             </div>
         </div>
-        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg">
-            <p class="text-gray-400 text-xs font-bold uppercase tracking-widest">Total Disbursed</p>
-            <p class="text-3xl font-black text-green-400 mt-1" id="stat-totalDisbursed">₱{{ number_format($totalDisbursed) }}</p>
+        <div class="card p-8">
+            <p class="text-[#1A1A1A]/40 text-[10px] font-black uppercase tracking-widest">Disbursed Capital</p>
+            <p class="text-4xl font-black text-[#FF6B00] tracking-tighter mt-2" id="stat-totalDisbursed">₱{{ number_format($totalDisbursed) }}</p>
         </div>
-        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg">
-            <p class="text-gray-400 text-xs font-bold uppercase tracking-widest">Database Size</p>
-            <p class="text-3xl font-black text-blue-400 mt-1" id="stat-dbSize">{{ $dbSize }} MB</p>
+        <div class="card p-8">
+            <p class="text-[#1A1A1A]/40 text-[10px] font-black uppercase tracking-widest">Registry Mass</p>
+            <p class="text-4xl font-black text-[#1A1A1A] tracking-tighter mt-2" id="stat-dbSize">{{ $dbSize }} MB</p>
         </div>
-        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg">
-            <p class="text-gray-400 text-xs font-bold uppercase tracking-widest">Backup Status</p>
-            <div class="flex items-center mt-1">
-                <span class="h-3 w-3 bg-green-500 rounded-full mr-2 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
-                <p class="text-xl font-black text-white">Healthy</p>
+        <div class="card p-8">
+            <p class="text-[#1A1A1A]/40 text-[10px] font-black uppercase tracking-widest">System Integrity</p>
+            <div class="flex items-center mt-2">
+                <span class="h-3 w-3 bg-green-500 rounded-full mr-2 shadow-lg shadow-green-500/40"></span>
+                <p class="text-2xl font-black text-[#1A1A1A] uppercase tracking-tighter">Healthy</p>
             </div>
-            <p class="text-[8px] text-gray-500 font-bold uppercase mt-1">Integrity Verified</p>
+            <p class="text-[8px] text-[#1A1A1A]/20 font-black uppercase tracking-widest mt-2">Verified Integrity</p>
         </div>
     </div>
 
     <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg">
-            <h3 class="text-white font-bold uppercase text-xs tracking-widest mb-6">User Registrations (Last 7 Days)</h3>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div class="card p-10">
+            <h3 class="text-[#1A1A1A] font-black uppercase text-xs tracking-[0.3em] mb-8">Node Growth (Last 7 Cycles)</h3>
             <canvas id="registrationsChart" height="200"></canvas>
         </div>
-        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg">
-            <h3 class="text-white font-bold uppercase text-xs tracking-widest mb-6">Loan Activity (Monthly)</h3>
+        <div class="card p-10">
+            <h3 class="text-[#1A1A1A] font-black uppercase text-xs tracking-[0.3em] mb-8">Asset Velocity (Monthly)</h3>
             <canvas id="activityChart" height="200"></canvas>
         </div>
     </div>
 
     <!-- Middle Row: Quick Actions & Status -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg">
-            <h3 class="text-white font-bold uppercase text-xs tracking-widest mb-6 border-b border-gray-700 pb-2">Quick Actions</h3>
-            <div class="grid grid-cols-2 gap-4">
-                <a href="{{ route('admin.users.index') }}" class="bg-gray-900 border border-gray-700 p-4 rounded-lg text-center hover:border-blue-500 transition group">
-                    <p class="text-white text-xs font-bold group-hover:text-blue-400">Manage Users</p>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div class="card p-10">
+            <h3 class="text-[#1A1A1A] font-black uppercase text-xs tracking-[0.3em] mb-8 border-b border-[#1A1A1A]/5 pb-4">Directives</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <a href="{{ route('admin.users.index') }}" class="group flex items-center justify-between p-4 bg-[#FEF6F0] rounded-2xl hover:bg-[#FF6B00] transition-all duration-300 no-underline">
+                    <span class="text-[#1A1A1A] text-[10px] font-black uppercase tracking-widest group-hover:text-white transition">Manage Registry</span>
+                    <svg class="w-4 h-4 text-[#FF6B00] group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
                 </a>
-                <a href="{{ route('admin.loans.index') }}" class="bg-gray-900 border border-gray-700 p-4 rounded-lg text-center hover:border-blue-500 transition group">
-                    <p class="text-white text-xs font-bold group-hover:text-blue-400">View Loans</p>
+                <a href="{{ route('admin.loans.index') }}" class="group flex items-center justify-between p-4 bg-[#FEF6F0] rounded-2xl hover:bg-[#FF6B00] transition-all duration-300 no-underline">
+                    <span class="text-[#1A1A1A] text-[10px] font-black uppercase tracking-widest group-hover:text-white transition">Audit Assets</span>
+                    <svg class="w-4 h-4 text-[#FF6B00] group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
                 </a>
-                <a href="{{ route('admin.audit-logs.index') }}" class="bg-gray-900 border border-gray-700 p-4 rounded-lg text-center hover:border-blue-500 transition group">
-                    <p class="text-white text-xs font-bold group-hover:text-blue-400">Audit Logs</p>
+                <a href="{{ route('admin.audit-logs.index') }}" class="group flex items-center justify-between p-4 bg-[#FEF6F0] rounded-2xl hover:bg-[#FF6B00] transition-all duration-300 no-underline">
+                    <span class="text-[#1A1A1A] text-[10px] font-black uppercase tracking-widest group-hover:text-white transition">Full Audit Trail</span>
+                    <svg class="w-4 h-4 text-[#FF6B00] group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
                 </a>
-                <a href="{{ route('admin.ai-security.index') }}" class="bg-gray-900 border border-gray-700 p-4 rounded-lg text-center hover:border-blue-500 transition group">
-                    <p class="text-white text-xs font-bold group-hover:text-blue-400">AI Risk</p>
+                <a href="{{ route('admin.ai-security.index') }}" class="group flex items-center justify-between p-4 bg-[#FEF6F0] rounded-2xl hover:bg-[#FF6B00] transition-all duration-300 no-underline">
+                    <span class="text-[#1A1A1A] text-[10px] font-black uppercase tracking-widest group-hover:text-white transition">Neural Defense</span>
+                    <svg class="w-4 h-4 text-[#FF6B00] group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
                 </a>
             </div>
         </div>
 
-        <div class="lg:col-span-2 bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg">
-            <h3 class="text-white font-bold uppercase text-xs tracking-widest mb-6 border-b border-gray-700 pb-2">Recent Activities</h3>
-            <div class="space-y-4" id="recent-activities">
+        <div class="lg:col-span-2 card p-10">
+            <h3 class="text-[#1A1A1A] font-black uppercase text-xs tracking-[0.3em] mb-8 border-b border-[#1A1A1A]/5 pb-4">Stream Logs</h3>
+            <div class="space-y-6" id="recent-activities">
                 @foreach($recentActivities as $activity)
-                    <div class="flex items-center justify-between text-sm border-b border-gray-700/50 pb-2">
-                        <div>
-                            <span class="text-blue-400 font-bold">{{ $activity->user->name ?? 'System' }}</span>
-                            <span class="text-gray-400 ml-2">{{ str_replace('_', ' ', $activity->event) }}</span>
-                            <span class="text-gray-600 text-xs ml-2">{{ class_basename($activity->auditable_type) }}</span>
+                    <div class="flex items-center justify-between text-[10px] border-b border-[#1A1A1A]/5 pb-4">
+                        <div class="flex items-center space-x-4">
+                            <span class="h-2 w-2 rounded-full bg-[#FF6B00]"></span>
+                            <div>
+                                <span class="text-[#1A1A1A] font-black uppercase tracking-widest">{{ $activity->user->name ?? 'System' }}</span>
+                                <span class="text-[#1A1A1A]/40 ml-2 font-bold uppercase">{{ str_replace('_', ' ', $activity->event) }}</span>
+                                <span class="text-[#FF6B00] text-[8px] ml-2 font-black uppercase tracking-[0.2em]">{{ class_basename($activity->auditable_type) }}</span>
+                            </div>
                         </div>
-                        <span class="text-gray-500 text-xs">{{ $activity->created_at->diffForHumans() }}</span>
+                        <span class="text-[#1A1A1A]/20 font-black uppercase tracking-widest">{{ $activity->created_at->diffForHumans() }}</span>
                     </div>
                 @endforeach
             </div>
@@ -112,18 +122,30 @@
             data: {
                 labels: {!! json_encode(collect($registrations)->pluck('date')) !!},
                 datasets: [{
-                    label: 'Registrations',
+                    label: 'Nodes',
                     data: {!! json_encode(collect($registrations)->pluck('total')) !!},
-                    borderColor: '#3b82f6',
+                    borderColor: '#FF6B00',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#1A1A1A',
                     tension: 0.4,
                     fill: true,
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)'
+                    backgroundColor: 'rgba(255, 107, 0, 0.05)'
                 }]
             },
             options: {
                 responsive: true,
                 plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, grid: { color: '#374151' } }, x: { grid: { display: false } } }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(26, 26, 26, 0.05)' },
+                        ticks: { font: { weight: 'bold' } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { weight: 'bold' } }
+                    }
+                }
             }
         });
 
@@ -132,15 +154,26 @@
             data: {
                 labels: {!! json_encode(collect($monthlyActivity)->pluck('month')) !!},
                 datasets: [{
-                    label: 'Loans',
+                    label: 'Assets',
                     data: {!! json_encode(collect($monthlyActivity)->pluck('count')) !!},
-                    backgroundColor: '#10b981'
+                    backgroundColor: '#1A1A1A',
+                    borderRadius: 8
                 }]
             },
             options: {
                 responsive: true,
                 plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, grid: { color: '#374151' } }, x: { grid: { display: false } } }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(26, 26, 26, 0.05)' },
+                        ticks: { font: { weight: 'bold' } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { weight: 'bold' } }
+                    }
+                }
             }
         });
     }
@@ -159,7 +192,6 @@
             document.getElementById('stat-activeNow').innerText = data.activeNow;
             document.getElementById('stat-totalDisbursed').innerText = '₱' + new Intl.NumberFormat().format(data.totalDisbursed);
             document.getElementById('stat-dbSize').innerText = data.dbSize + ' MB';
-            document.getElementById('stat-errorRate').innerText = data.errorRate + '%';
 
             // Update charts
             regChart.data.labels = data.registrations.map(r => r.date);
@@ -173,13 +205,16 @@
             // Update activities
             const activityContainer = document.getElementById('recent-activities');
             activityContainer.innerHTML = data.recentActivities.map(a => `
-                <div class="flex items-center justify-between text-sm border-b border-gray-700/50 pb-2">
-                    <div>
-                        <span class="text-blue-400 font-bold">${a.user ? a.user.name : 'System'}</span>
-                        <span class="text-gray-400 ml-2">${a.event.replace('_', ' ')}</span>
-                        <span class="text-gray-600 text-xs ml-2">${a.auditable_type.split('\\').pop()}</span>
+                <div class="flex items-center justify-between text-[10px] border-b border-[#1A1A1A]/5 pb-4">
+                    <div class="flex items-center space-x-4">
+                        <span class="h-2 w-2 rounded-full bg-[#FF6B00]"></span>
+                        <div>
+                            <span class="text-[#1A1A1A] font-black uppercase tracking-widest">${a.user ? a.user.name : 'System'}</span>
+                            <span class="text-[#1A1A1A]/40 ml-2 font-bold uppercase">${a.event.replace('_', ' ')}</span>
+                            <span class="text-[#FF6B00] text-[8px] ml-2 font-black uppercase tracking-[0.2em]">${a.auditable_type.split('\\').pop()}</span>
+                        </div>
                     </div>
-                    <span class="text-gray-500 text-xs">just now</span>
+                    <span class="text-[#1A1A1A]/20 font-black uppercase tracking-widest">just now</span>
                 </div>
             `).join('');
 
@@ -187,7 +222,7 @@
             console.error('Error refreshing dashboard:', error);
         } finally {
             btn.disabled = false;
-            btn.innerText = 'Refresh Data';
+            btn.innerText = 'Recalibrate Data';
         }
     }
 

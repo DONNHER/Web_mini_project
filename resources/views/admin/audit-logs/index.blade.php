@@ -1,36 +1,34 @@
 @extends('layouts.app')
 
-@section('title', 'Audit Logs - Admin')
+@section('title', 'Admin Audit Logs')
 
 @section('header')
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-            <h1 class="text-3xl font-bold text-white tracking-tight">Audit Logs</h1>
-            <p class="mt-2 text-white font-medium">Track all changes and access events in the system</p>
+            <span class="text-[#FF6B00] font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">Security Ledger</span>
+            <h1 class="text-5xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Audit <span class="text-[#FF6B00]">Registry</span></h1>
         </div>
-        <div class="flex flex-wrap gap-3">
-            <a href="{{ request()->fullUrlWithQuery(['export' => 'csv']) }}" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition font-bold uppercase tracking-widest text-xs flex items-center border border-gray-600">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                Export CSV
+        <div class="flex flex-wrap gap-4">
+            <a href="{{ request()->fullUrlWithQuery(['export' => 'csv']) }}" class="btn-secondary px-6 no-underline">
+                Export Data (.CSV)
             </a>
-            <a href="{{ request()->fullUrlWithQuery(['export' => 'xlsx']) }}" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition font-bold uppercase tracking-widest text-xs flex items-center shadow-lg shadow-green-900/20">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Export Excel
+            <a href="{{ request()->fullUrlWithQuery(['export' => 'xlsx']) }}" class="btn-primary px-6 no-underline">
+                Generate Report (.XLSX)
             </a>
         </div>
     </div>
 @endsection
 
 @section('content')
-<div class="max-w-7xl mx-auto space-y-8">
+<div class="space-y-12">
 
     {{-- Filters --}}
-    <div class="bg-gray-800 rounded-xl shadow-xl p-8 border border-gray-700">
-        <form action="{{ route('admin.audit-logs.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+    <div class="card p-10">
+        <form action="{{ route('admin.audit-logs.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
             <div>
-                <label class="block text-xs font-bold text-white uppercase tracking-widest mb-2">User</label>
-                <select name="user_id" class="w-full bg-gray-700 border-gray-600 text-white rounded-md focus:ring-white text-sm">
-                    <option value="">All Users</option>
+                <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Operator</label>
+                <select name="user_id" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                    <option value="">Matrix: All</option>
                     @foreach($users as $id => $name)
                         <option value="{{ $id }}" {{ request('user_id') == $id ? 'selected' : '' }}>
                             {{ $name }}
@@ -40,9 +38,9 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-white uppercase tracking-widest mb-2">Target Type</label>
-                <select name="auditable_type" class="w-full bg-gray-700 border-gray-600 text-white rounded-md focus:ring-white text-sm">
-                    <option value="">All Types</option>
+                <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Asset Class</label>
+                <select name="auditable_type" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                    <option value="">Matrix: All</option>
                     @foreach($modelTypes as $type => $label)
                         <option value="{{ $type }}" {{ request('auditable_type') == $type ? 'selected' : '' }}>
                             {{ $label }}
@@ -52,9 +50,9 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-white uppercase tracking-widest mb-2">Event</label>
-                <select name="event" class="w-full bg-gray-700 border-gray-600 text-white rounded-md focus:ring-white text-sm">
-                    <option value="">All Events</option>
+                <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Event Logic</label>
+                <select name="event" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
+                    <option value="">Matrix: All</option>
                     @foreach($events as $event)
                         <option value="{{ $event }}" {{ request('event') == $event ? 'selected' : '' }}>
                             {{ ucfirst(str_replace('_', ' ', $event)) }}
@@ -64,91 +62,85 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-white uppercase tracking-widest mb-2">From</label>
-                <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full bg-gray-700 border-gray-600 text-white rounded-md text-sm">
+                <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Temporal Start</label>
+                <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-white uppercase tracking-widest mb-2">To</label>
-                <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full bg-gray-700 border-gray-600 text-white rounded-md text-sm">
+                <label class="block text-[10px] font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-3">Temporal End</label>
+                <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full bg-[#FEF6F0] border-none rounded-xl py-3 font-bold focus:ring-4 focus:ring-[#FF6B00]/5 text-xs">
             </div>
 
-            <div class="md:col-span-3 lg:col-span-5 flex justify-end items-center space-x-4">
-                <a href="{{ route('admin.audit-logs.index') }}" class="text-white font-bold text-xs uppercase tracking-tighter transition hover:underline">
-                    Clear Filters
+            <div class="md:col-span-3 lg:col-span-5 flex justify-end items-center space-x-6 pt-4">
+                <a href="{{ route('admin.audit-logs.index') }}" class="text-[10px] font-black text-[#1A1A1A]/40 uppercase tracking-widest no-underline hover:text-[#FF6B00] transition">
+                    Reset Parameters
                 </a>
-                <button type="submit" class="bg-blue-600 text-white px-8 py-2 rounded-md hover:bg-blue-700 transition font-black uppercase tracking-widest shadow-lg">
-                    Apply Filters
+                <button type="submit" class="btn-primary px-12">
+                    Execute Scan
                 </button>
             </div>
         </form>
     </div>
 
     {{-- Audit Logs Table --}}
-    <div class="bg-gray-800 rounded-xl shadow-xl overflow-hidden border border-gray-700">
+    <div class="card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700">
-                <thead class="bg-gray-900">
+            <table class="w-full text-left">
+                <thead class="bg-[#1A1A1A] text-white uppercase text-[10px] font-black tracking-[0.2em]">
                     <tr>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-white uppercase tracking-widest">Date/Time</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-white uppercase tracking-widest">User</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-white uppercase tracking-widest">Event</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-white uppercase tracking-widest">Target</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-white uppercase tracking-widest">Integrity</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-white uppercase tracking-widest">Actions</th>
+                        <th class="px-10 py-6">Timestamp</th>
+                        <th class="px-6 py-6">Operator</th>
+                        <th class="px-6 py-6">Logic Event</th>
+                        <th class="px-6 py-6">Target Node</th>
+                        <th class="px-6 py-6">Integrity</th>
+                        <th class="px-10 py-6 text-right">Directives</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700">
+                <tbody class="divide-y divide-[#1A1A1A]/5">
                     @forelse($audits as $audit)
-                    <tr class="hover:bg-gray-750 transition-colors {{ $audit->isCriticalEvent() ? 'bg-red-900/10' : '' }}">
-                        <td class="px-6 py-4 text-sm text-gray-300 font-medium whitespace-nowrap">
+                    <tr class="group hover:bg-[#FEF6F0] transition-colors {{ $audit->isCriticalEvent() ? 'bg-red-500/5' : '' }}">
+                        <td class="px-10 py-6 text-xs font-bold text-[#1A1A1A]/60">
                             {{ $audit->created_at->format('M d, Y H:i:s') }}
                         </td>
-                        <td class="px-6 py-4 text-sm text-white font-bold">
-                            {{ $audit->user->name ?? 'System' }}
+                        <td class="px-6 py-6">
+                            <span class="text-sm font-black text-[#1A1A1A]">{{ $audit->user->name ?? 'SYSTEM' }}</span>
                         </td>
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 text-[10px] font-black uppercase tracking-tighter rounded-full border
-                                @if($audit->event == 'deleted' || $audit->event == 'login_failed' || $audit->event == 'error_logged') border-red-500 text-red-500 bg-red-500/10
-                                @elseif($audit->event == 'created' || $audit->event == 'login') border-green-500 text-green-500 bg-green-500/10
-                                @elseif($audit->event == 'accessed') border-gray-500 text-gray-500
-                                @else border-blue-500 text-blue-500 bg-blue-500/10
+                        <td class="px-6 py-6">
+                            <span class="px-3 py-1 text-[8px] font-black uppercase tracking-widest rounded-full border
+                                @if($audit->event == 'deleted' || $audit->event == 'login_failed' || $audit->event == 'error_logged') border-red-500 text-red-600 bg-red-500/5
+                                @elseif($audit->event == 'created' || $audit->event == 'login') border-green-500 text-green-600 bg-green-500/5
+                                @else border-[#1A1A1A]/10 text-[#1A1A1A]/60
                                 @endif">
                                 {{ str_replace('_', ' ', $audit->event) }}
                             </span>
-                            @if($audit->isCriticalEvent())
-                                <span class="ml-2 inline-flex items-center text-[8px] font-black text-red-500 uppercase tracking-widest animate-pulse">
-                                    ● SUSPICIOUS
-                                </span>
-                            @endif
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-400">
-                            <span class="font-bold text-white">{{ class_basename($audit->auditable_type) }}</span>
-                            @if($audit->auditable_id) <span class="text-xs opacity-60">#{{ $audit->auditable_id }}</span> @endif
+                        <td class="px-6 py-6">
+                            <span class="text-xs font-bold text-[#1A1A1A]">{{ class_basename($audit->auditable_type) }}</span>
+                            @if($audit->auditable_id) <span class="text-[10px] opacity-40">ID:{{ $audit->auditable_id }}</span> @endif
                         </td>
-                        <td class="px-6 py-4 text-sm">
+                        <td class="px-6 py-6">
                             @if($audit->isValid())
-                                <span class="text-green-500 flex items-center text-[10px] font-black uppercase" title="Checksum Verified">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                    Valid
+                                <span class="text-green-600 flex items-center text-[10px] font-black uppercase tracking-widest">
+                                    <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                    Secure
                                 </span>
                             @else
-                                <span class="text-red-500 flex items-center text-[10px] font-black uppercase" title="Log Tampered!">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                    Tampered
+                                <span class="text-red-600 flex items-center text-[10px] font-black uppercase tracking-widest animate-pulse">
+                                    <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                    Compromised
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-sm">
-                            <a href="{{ route('admin.audit-logs.show', $audit) }}" class="text-blue-400 hover:text-blue-300 font-bold uppercase text-[10px] tracking-widest transition">
-                                Details →
+                        <td class="px-10 py-6 text-right">
+                            <a href="{{ route('admin.audit-logs.show', $audit) }}" class="text-[#1A1A1A] font-black text-[10px] uppercase tracking-widest no-underline border-b-2 border-[#1A1A1A] hover:text-[#FF6B00] hover:border-[#FF6B00] transition">
+                                Inspect
                             </a>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-500 italic">
-                            No audit logs found matching your filters.
+                        <td colspan="6" class="px-10 py-20 text-center">
+                            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1A1A]/20">No matching logs identified in registry.</p>
                         </td>
                     </tr>
                     @endforelse
@@ -156,14 +148,9 @@
             </table>
         </div>
 
-        <div class="px-6 py-4 border-t border-gray-700 bg-gray-900/50 pagination-dark">
+        <div class="px-10 py-6 border-t border-[#1A1A1A]/5">
             {{ $audits->withQueryString()->links() }}
         </div>
-    </div>
-
-    <div class="flex items-center justify-center space-x-2 text-gray-500 text-[10px] uppercase tracking-widest py-4">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        <span>Logs older than 90 days are automatically archived.</span>
     </div>
 </div>
 @endsection

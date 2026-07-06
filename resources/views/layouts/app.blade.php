@@ -63,10 +63,12 @@
                 if (data.notifications && data.notifications.length > 0) {
                     listContainer.innerHTML = data.notifications.map(n => `
                         <div class="p-4 border-b border-[#FFEDD5] hover:bg-[#FEF6F0] transition">
-                            <p class="text-[10px] font-bold text-[#1A1A1A]">${n.data.message || 'Notification'}</p>
-                            <p class="text-[8px] text-[#1A1A1A]/40 mt-1">${new Date(n.created_at).toLocaleString()}</p>
+                            <p class="text-[10px] font-bold text-[#1A1A1A]">${n.message || 'Notification'}</p>
+                            <p class="text-[8px] text-[#1A1A1A]/40 mt-1">${n.time || ''}</p>
                         </div>
                     `).join('');
+                } else {
+                    listContainer.innerHTML = '<p class="p-8 text-center text-[#1A1A1A]/30 text-[10px] font-bold uppercase tracking-widest italic">No new events</p>';
                 }
             } catch (error) { console.error(error); }
         }

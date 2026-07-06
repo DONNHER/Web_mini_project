@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'PIL - Point of Sale and Lending System')
+@section('title', 'Home')
 
 @section('content')
     <!-- Hero Section -->
