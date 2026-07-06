@@ -62,6 +62,16 @@
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                     </div>
 
+                    <!-- Invite Code -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#1A1A1A]/30">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                        </div>
+                        <input id="invite_code" type="text" name="invite_code" placeholder="Admin Invite Code" required class="w-full pl-12 pr-10 border-[#FFEDD5] focus:border-[#FF6B00] focus:ring-0 rounded-2xl py-4 font-semibold text-[#1A1A1A] shadow-sm">
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 font-bold text-lg">*</span>
+                        <x-input-error :messages="$errors->get('invite_code')" class="mt-2" />
+                    </div>
+
                     <!-- Password Requirements -->
                     <div x-show="showRequirements" x-transition class="text-[10px] font-black text-red-600 uppercase tracking-wider space-y-1 mb-2 px-2">
                         <p class="m-0">• The password field must contain at least one uppercase and one lowercase letter.</p>

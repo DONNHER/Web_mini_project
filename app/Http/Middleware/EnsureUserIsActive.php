@@ -14,6 +14,14 @@ class EnsureUserIsActive
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check() && Auth::user()->status !== 'active') {
+            // Allow them to see the verification page if they are pending
+            if (Auth::user()->status === 'pending' && !Auth::user()->hasVerifiedEmail()) {
+                if ($request->routeIs('verification.*') || $request->routeIs('logout')) {
+                    return $next($request);
+                }
+                return redirect()->route('verification.notice');
+            }
+
             $status = Auth::user()->status;
             Auth::logout();
 
