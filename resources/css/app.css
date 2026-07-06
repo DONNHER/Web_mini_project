@@ -3,77 +3,102 @@
 
 @layer base {
     body {
-        background-color: var(--brand-color, #C06C3E) !important;
-        color: black;
+        background-color: #FEF6F0 !important;
+        color: #1A1A1A;
+        font-family: 'Instrument Sans', sans-serif;
     }
 
-    /* Force Theme Overrides */
-    .bg-white, .bg-gray-800, .bg-gray-900 {
-        background-color: var(--brand-color, #C06C3E) !important;
-        color: #000000 !important;
-        border-color: rgba(0, 0, 0, 0.1) !important;
-    }
-
-    /* Links and Accents */
+    /* Links */
     a {
-        color: #000000;
-        text-decoration: underline;
+        color: #FF6B00;
+        text-decoration: none;
+        transition: all 0.2s ease;
     }
 
     a:hover {
         opacity: 0.8;
     }
 
-    .text-white, .text-gray-400, .text-gray-300, .text-blue-400, .text-gray-500 {
-        color: #000000 !important;
-    }
-
-    .border-gray-700, .border-gray-800, .border-gray-600 {
-        border-color: rgba(0, 0, 0, 0.2) !important;
-    }
-
-    /* Form Inputs */
+    /* Form Elements */
     input, select, textarea {
-        background-color: rgba(255, 255, 255, 0.2) !important;
-        border-color: rgba(0, 0, 0, 0.3) !important;
-        color: #000000 !important;
-    }
-
-    input::placeholder, textarea::placeholder {
-        color: rgba(0, 0, 0, 0.5) !important;
+        background-color: #FFFFFF !important;
+        border: 1px solid #FFEDD5 !important;
+        border-radius: 1rem !important;
+        padding: 0.75rem 1rem !important;
+        color: #1A1A1A !important;
+        font-weight: 500 !important;
     }
 
     input:focus, select:focus, textarea:focus {
-        outline: 2px solid #000000 !important;
-        border-color: #000000 !important;
+        border-color: #FF6B00 !important;
+        box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1) !important;
+        outline: none !important;
     }
 
-    /* Buttons */
-    button, .bg-blue-600, .bg-green-600, .bg-red-600, .bg-indigo-600 {
-        background-color: #000000 !important;
-        color: #C06C3E !important;
-        border: none !important;
-        font-weight: bold !important;
+    input::placeholder {
+        color: #A1A1A1 !important;
+        font-weight: 400 !important;
     }
 
-    button:hover {
-        opacity: 0.9 !important;
-    }
-
-    .bg-gray-700 {
-        background-color: rgba(0, 0, 0, 0.1) !important;
-    }
-
-    /* Table headers */
-    thead.bg-gray-900 {
-        background-color: rgba(0, 0, 0, 0.2) !important;
-    }
-
-    th {
-        color: #000000 !important;
+    /* Cards */
+    .card {
+        background-color: #FFFFFF;
+        border-radius: 1.5rem;
+        border: 1px solid rgba(255, 107, 0, 0.05);
+        box-shadow: 0 4px 20px -2px rgba(255, 107, 0, 0.05);
     }
 }
 
-/* Custom classes for the new theme */
-.bg-brand { background-color: #C06C3E; }
-.text-brand { color: #C06C3E; }
+/* Custom Theme Classes */
+.bg-brand { background-color: #FF6B00 !important; }
+.text-brand { color: #FF6B00 !important; }
+.border-brand { border-color: #FF6B00 !important; }
+
+.btn-primary {
+    background-color: #FF6B00 !important;
+    color: #FFFFFF !important;
+    border-radius: 1rem !important;
+    padding: 1rem 2rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    border: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 20px -5px rgba(255, 107, 0, 0.4) !important;
+}
+
+.btn-secondary {
+    background-color: #FFFFFF !important;
+    color: #FF6B00 !important;
+    border: 1px solid #FF6B00 !important;
+    border-radius: 1rem !important;
+    padding: 1rem 2rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* Auth Screens */
+.auth-container {
+    max-width: 450px;
+    width: 100%;
+}
+
+.logo-box {
+    background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
+    width: 80px;
+    height: 80px;
+    border-radius: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px -5px rgba(255, 107, 0, 0.4);
+    margin: 0 auto 1.5rem;
+}
