@@ -3,35 +3,34 @@
 # Fail on error
 set -e
 
-echo "🚀 Starting LendingSystem Infrastructure..."
+echo "🚀 Initializing LendingSystem..."
 
-# Ensure storage directories exist
-mkdir -p storage/framework/cache/data
-mkdir -p storage/framework/sessions
-mkdir -p storage/framework/views
-mkdir -p storage/logs
+# --- FINAL APACHE MPM CHECK ---
+# Manually remove the conflicting symlinks if they exist
+rm -f /etc/apache2/mods-enabled/mpm_event.load
+rm -f /etc/apache2/mods-enabled/mpm_event.conf
+rm -f /etc/apache2/mods-enabled/mpm_worker.load
+rm -f /etc/apache2/mods-enabled/mpm_worker.conf
 
-# Set permissions
+# Ensure prefork is the only one active
+ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load
+ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
+
+# Ensure storage setup
+mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
 chown -R www-data:www-data storage bootstrap/cache
-
-# Create storage link
 php artisan storage:link --force
 
-# Clear old view artifacts to prevent "book-card" phantom errors
-echo "🧹 Cleaning legacy view artifacts..."
+# Cleanup & Cache
 rm -rf storage/framework/views/*.php
-
-# Cache configurations for production speed
-echo "⚡ Optimizing system performance..."
 php artisan config:cache
 php artisan route:cache
-php artisan view:cache || { echo "❌ Blade caching failed. Proceeding anyway..."; }
+php artisan view:cache || echo "Blade caching skipped."
 
-# Run migrations
-echo "📊 Synchronizing database schema..."
+# Migrations
 php artisan migrate --force
 
-echo "✅ System ready. Starting Apache..."
+echo "✅ Boot sequence complete. Starting Apache..."
 
 # Start Apache
 exec apache2-foreground

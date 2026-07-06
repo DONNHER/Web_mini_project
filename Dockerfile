@@ -13,13 +13,7 @@ FROM php:8.4-apache
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
-# Fix Apache MPM conflict: Brute force clear all enabled MPMs
-# and explicitly enable ONLY prefork (required for mod_php)
-RUN rm -f /etc/apache2/mods-enabled/mpm_* && \
-    a2enmod mpm_prefork rewrite && \
-    echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-# Install System Dependencies
+# 1. Install System Dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -31,7 +25,7 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP Extensions
+# 2. Install PHP Extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
     gd \
@@ -41,7 +35,13 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     intl \
     opcache
 
-# Configure Apache Document Root
+# 3. Configure Apache MPM & Modules
+# We disable event/worker and force prefork to avoid AH00534
+RUN a2dismod mpm_event mpm_worker || true \
+    && a2enmod mpm_prefork rewrite \
+    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# 4. Configure Apache Document Root
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
@@ -63,7 +63,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port (Render/Railway use $PORT)
+# Expose port (Railway use $PORT)
 RUN sed -i "s/80/\${PORT:-80}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
 # Production Entrypoint
