@@ -35,8 +35,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     intl \
     opcache
 
-# 3. Configure Apache MPM & Modules
-# We disable event/worker and force prefork to avoid AH00534
+# 3. Configure Apache Modules
 RUN a2dismod mpm_event mpm_worker || true \
     && a2enmod mpm_prefork rewrite \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
@@ -62,9 +61,6 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Expose port (Railway use $PORT)
-RUN sed -i "s/80/\${PORT:-80}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
 # Production Entrypoint
 RUN chmod +x /var/www/html/start.sh
