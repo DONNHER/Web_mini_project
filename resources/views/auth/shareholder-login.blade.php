@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PIL - Admin Sign In</title>
+    <title>PIL - Shareholder Sign In</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -35,8 +35,8 @@
                 </div>
 
                 <div class="text-left mb-10">
-                    <h1 class="text-4xl font-black text-[#1A1A1A] tracking-tight mb-3">Admin Portal</h1>
-                    <p class="text-[#1A1A1A]/50 text-base font-semibold tracking-tight">Sign in to access your PIL dashboard</p>
+                    <h1 class="text-4xl font-black text-[#1A1A1A] tracking-tight mb-3">Welcome back</h1>
+                    <p class="text-[#1A1A1A]/50 text-base font-semibold tracking-tight">Sign in to access your shareholder dashboard</p>
                 </div>
 
                 <form method="POST" action="{{ route('login') }}" class="space-y-5">
@@ -80,11 +80,8 @@
                 <div class="mt-16">
                     <div class="relative flex items-center justify-center mb-8">
                         <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-[#FFEDD5]"></div></div>
-                        <span class="relative px-4 bg-[#FEF6F0] text-[10px] font-black text-[#1A1A1A]/30 uppercase tracking-[0.2em]">New to PIL?</span>
+                        <span class="relative px-4 bg-[#FEF6F0] text-[10px] font-black text-[#1A1A1A]/30 uppercase tracking-[0.2em]">Partner with PIL</span>
                     </div>
-                    <a href="{{ route('register') }}" class="btn-secondary w-full flex items-center justify-center shadow-sm uppercase tracking-[0.2em] font-black text-xs">
-                        {{ __('Create an Account') }}
-                    </a>
                 </div>
             </div>
         </div>

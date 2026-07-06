@@ -22,6 +22,9 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');
 
+    Route::get('shareholder-login', [AuthenticatedSessionController::class, 'createShareholder'])
+                ->name('shareholder.login');
+
     Route::post('login', [AuthenticatedSessionController::class, 'store'])
                 ->middleware('throttle:auth');
 
