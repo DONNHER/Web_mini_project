@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use App\Models\User;
 
 class VerifyEmailController extends Controller
@@ -13,7 +14,7 @@ class VerifyEmailController extends Controller
     /**
      * Mark the authenticated user's email address as verified.
      */
-    public function __invoke(Request $request): RedirectResponse
+    public function __invoke(Request $request): View|RedirectResponse
     {
         // Find user by ID from route
         $user = User::findOrFail($request->route('id'));
