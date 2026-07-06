@@ -42,12 +42,19 @@ class RegisteredUserController extends Controller
             }],
         ]);
 
-        $adminRole = \App\Models\Role::where('name', 'admin')->first();
+        $adminRole = \App\Models\Role::firstOrCreate(
+            ['name' => 'admin'],
+            [
+                'display_name' => 'Administrator',
+                'description' => 'Full system control',
+            ]
+        );
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $adminRole ? $adminRole->id : null,
+            'role_id' => $adminRole->id,
             'status' => 'pending',
         ]);
 

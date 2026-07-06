@@ -35,7 +35,13 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, WithBatchI
         $this->rowsCount++;
 
         $roleName = ($row['role'] ?? 'customer') === 'admin' ? 'admin' : 'borrower';
-        $role = \App\Models\Role::where('name', $roleName)->first();
+        $role = \App\Models\Role::firstOrCreate(
+            ['name' => $roleName],
+            [
+                'display_name' => ucwords($roleName),
+                'description' => 'Automatically generated during import',
+            ]
+        );
 
         return new User([
             'name'     => $row['name'],
