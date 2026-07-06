@@ -62,6 +62,16 @@
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                     </div>
 
+                    <!-- Phone Number -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#1A1A1A]/30">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 011.94.445l-.992 2.84a1 1 0 01-1.24.58L6.22 5.22a10.603 10.603 0 005.56 5.56l1.76-1.76a1 1 0 011.24-.58l2.84.992a1 1 0 01.445 1.94V19a2 2 0 01-2 2h-2.28a1 1 0 01-1.94-.445l.992-2.84a1 1 0 011.24-.58l1.76 1.76a10.603 10.603 0 00-5.56-5.56l-1.76 1.76a1 1 0 01-1.24.58l-2.84-.992a1 1 0 01-.445-1.94V5z"></path></svg>
+                        </div>
+                        <input id="phone" type="text" name="phone" value="{{ old('phone') }}" placeholder="Mobile Number (e.g. +639...)" required class="w-full pl-12 pr-10 border-[#FFEDD5] focus:border-[#FF6B00] focus:ring-0 rounded-2xl py-4 font-semibold text-[#1A1A1A] shadow-sm">
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 font-bold text-lg">*</span>
+                        <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+                    </div>
+
                     <!-- Invite Code -->
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#1A1A1A]/30">

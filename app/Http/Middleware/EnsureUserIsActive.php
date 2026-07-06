@@ -16,7 +16,7 @@ class EnsureUserIsActive
         if (Auth::check() && Auth::user()->status !== 'active') {
             // Allow them to see the verification page if they are pending
             if (Auth::user()->status === 'pending' && !Auth::user()->hasVerifiedEmail()) {
-                if ($request->routeIs('verification.*') || $request->routeIs('logout')) {
+                if ($request->routeIs('verification.*') || $request->routeIs('logout') || $request->routeIs('two-factor.*')) {
                     return $next($request);
                 }
                 return redirect()->route('verification.notice');

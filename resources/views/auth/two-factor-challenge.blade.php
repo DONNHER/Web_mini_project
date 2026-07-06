@@ -15,7 +15,7 @@
             <h2 class="mt-6 text-2xl font-black text-white uppercase tracking-tight">Identity Verification</h2>
 
             <div class="mt-4 text-gray-400 text-sm">
-                <p>Please enter the 6-digit OTP sent to your email or the code from your authenticator app.</p>
+                <p>Please enter the 6-digit OTP sent to your phone via SMS or the code from your authenticator app.</p>
             </div>
 
             @if (session('error'))
@@ -50,7 +50,7 @@
 
             <div class="mt-8 pt-8 border-t border-gray-700 flex flex-col space-y-4">
                 <p class="text-[10px] text-gray-500 font-bold uppercase tracking-tighter">
-                    Having trouble? Check your spam folder for the OTP.
+                    Having trouble? Please wait a few moments or contact support.
                 </p>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

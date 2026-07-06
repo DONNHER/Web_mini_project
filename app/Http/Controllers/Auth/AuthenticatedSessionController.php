@@ -45,7 +45,12 @@ class AuthenticatedSessionController extends Controller
                 'otp_expires_at' => now()->addMinutes(10)
             ]);
 
-            $request->user()->notify(new \App\Notifications\SendOtpNotification($otp));
+            if ($request->user()->phone) {
+                $request->user()->notify(new \App\Notifications\SendOtpNotification($otp));
+            } else {
+                // Fallback or alert
+                \Illuminate\Support\Facades\Log::warning("User {$request->user()->id} attempted login with 2FA but has no phone number.");
+            }
 
             session(['2fa_required' => true]);
             return redirect()->route('two-factor.challenge');

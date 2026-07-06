@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
+use App\Channels\SmsChannel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class SendOtpNotification extends Notification
@@ -19,15 +19,11 @@ class SendOtpNotification extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return [SmsChannel::class];
     }
 
-    public function toMail($notifiable): MailMessage
+    public function toSms($notifiable): string
     {
-        return (new MailMessage)
-            ->subject('Your One-Time Password (OTP)')
-            ->line('Your OTP for secure login is: ' . $this->otp)
-            ->line('This code will expire in 10 minutes.')
-            ->line('If you did not request this code, please ignore this email.');
+        return "Your PIL infrastructure OTP is: {$this->otp}. Valid for 10 minutes. Do not share this code.";
     }
 }

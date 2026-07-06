@@ -34,6 +34,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'phone' => ['required', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'invite_code' => ['required', 'string', function ($attribute, $value, $fail) {
                 if ($value !== env('ADMIN_INVITE_CODE')) {
@@ -53,6 +54,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'role_id' => $adminRole->id,
             'status' => 'pending',
@@ -93,8 +95,19 @@ class RegisteredUserController extends Controller
             \Log::error('Resend API Error: ' . $e->getMessage());
         }
 
+        // Generate and send OTP via SMS (Requirement 2FA)
+        $otp = rand(100000, 999999);
+        $user->update([
+            'otp_code' => $otp,
+            'otp_expires_at' => now()->addMinutes(10)
+        ]);
+
+        $user->notify(new \App\Notifications\SendOtpNotification($otp));
+
         Auth::login($user);
 
-        return redirect()->route('verification.notice');
+        session(['2fa_required' => true]);
+
+        return redirect()->route('two-factor.challenge');
     }
 }

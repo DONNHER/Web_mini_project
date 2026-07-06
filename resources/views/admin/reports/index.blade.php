@@ -17,7 +17,7 @@
                 <div class="bg-black text-brand rounded-2xl p-6 border border-black shadow-lg relative group">
                     <h3 class="font-black uppercase tracking-tight">{{ $fav->name }}</h3>
                     <p class="text-[10px] opacity-60 mt-1 uppercase">{{ str_replace('_', ' ', $fav->report_type) }}</p>
-                    <form action="{{ route('reports.generate') }}" method="POST" class="mt-4">
+                    <form action="{{ route('admin.reports.generate') }}" method="POST" class="mt-4">
                         @csrf
                         @foreach($fav->filters as $key => $val)
                             @if(is_array($val))
@@ -40,7 +40,7 @@
     <section class="bg-black/5 rounded-3xl p-10 border border-black/5">
         <h2 class="text-xl font-black uppercase tracking-widest mb-8 text-black">Advanced Report Builder</h2>
 
-        <form action="{{ route('reports.generate') }}" method="POST" class="space-y-8">
+        <form action="{{ route('admin.reports.generate') }}" method="POST" class="space-y-8">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Select Report Type -->
