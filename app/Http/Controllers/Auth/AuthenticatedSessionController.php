@@ -51,6 +51,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('two-factor.challenge');
         }
 
+        if ($request->user()->isAdmin()) {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
         return redirect()->intended(route('home', absolute: false));
     }
 
