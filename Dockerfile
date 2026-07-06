@@ -13,14 +13,6 @@ FROM php:8.4-apache
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
-# Configure Apache
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
-# Fix Apache MPM conflict: ensure ONLY prefork is enabled for PHP module
-RUN a2dismod mpm_event mpm_worker || true && \
-    a2enmod mpm_prefork rewrite
-
 # Install System Dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
@@ -43,6 +35,16 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     intl \
     opcache
 
+# Fix Apache MPM conflict: Brute force removal of conflicting MPMs
+# Official PHP images sometimes have mpm_event enabled in a way that needs manual cleanup
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
+    && rm -f /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf \
+    && a2enmod mpm_prefork rewrite
+
+# Configure Apache Document Root
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -61,7 +63,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port (dynamic for cloud platforms)
+# Expose port (Render/Railway use $PORT)
 RUN sed -i "s/80/\${PORT:-80}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
 # Production Entrypoint
