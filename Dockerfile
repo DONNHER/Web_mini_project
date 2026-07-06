@@ -9,13 +9,17 @@ RUN npm run build
 # --- Stage 2: Final Production Image ---
 FROM php:8.4-apache
 
-# Set COMPOSER_ALLOW_SUPERUSER to allow plugins
+# Allow Composer to run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
-
-# Set Document Root for Apache
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+# Configure Apache
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Fix Apache MPM conflict: ensure ONLY prefork is enabled for PHP module
+RUN a2dismod mpm_event mpm_worker || true && \
+    a2enmod mpm_prefork rewrite
 
 # Install System Dependencies
 RUN apt-get update && apt-get install -y \
@@ -39,9 +43,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     intl \
     opcache
 
-# Fix Apache MPM conflict and enable mod_rewrite
-RUN a2dismod mpm_event || true && a2enmod mpm_prefork && a2enmod rewrite
-
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -58,12 +59,9 @@ COPY --from=frontend-builder /app/public/build ./public/build
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Set permissions for Laravel
-RUN chown -R www-data:www-data \
-    /var/www/html/storage \
-    /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port (Render uses 10000 by default, but Apache defaults to 80)
-# We will use a script to change Apache port to $PORT if provided
+# Expose port (dynamic for cloud platforms)
 RUN sed -i "s/80/\${PORT:-80}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
 # Production Entrypoint

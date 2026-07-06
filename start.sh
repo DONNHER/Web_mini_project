@@ -12,6 +12,9 @@ chown -R www-data:www-data storage bootstrap/cache
 # Create storage link
 php artisan storage:link --force
 
+# Clear old view artifacts
+rm -rf storage/framework/views/*.php
+
 # Cache configurations
 php artisan config:cache
 php artisan route:cache
