@@ -86,84 +86,94 @@
         </form>
     </div>
 
-    <!-- Registry Table -->
-    <form action="{{ route('admin.users.index') }}" method="GET" id="bulk-form">
-        <div class="bg-black/5 rounded-3xl overflow-hidden border border-black/5">
-            <div class="px-10 py-6 border-b border-black/5 flex justify-between items-center bg-black/5">
-                <!-- Bulk Actions (Requirement 13.5) -->
-                <div class="flex items-center space-x-4">
-                    <select name="bulk_action" class="bg-white/20 border-black/10 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest focus:ring-black">
-                        <option value="">Bulk Operations</option>
-                        <option value="activate">Activate Selected</option>
-                        <option value="suspend">Suspend Selected</option>
-                        <option value="delete">Purge Selected</option>
-                    </select>
-                    <button type="submit" class="bg-black text-brand px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition hover:opacity-80">Execute</button>
-                </div>
+    <!-- Bulk Action Processing Form Container -->
+    <form action="{{ route('admin.users.index') }}" method="GET" id="bulk-form" class="hidden"></form>
 
-                <div class="text-[10px] font-black uppercase tracking-widest text-black/40">
-                    Total Records: {{ $users->total() }}
-                </div>
+    <!-- Registry Table Container -->
+    <div class="bg-black/5 rounded-3xl overflow-hidden border border-black/5">
+        <div class="px-10 py-6 border-b border-black/5 flex justify-between items-center bg-black/5">
+            <!-- Bulk Actions (Requirement 13.5) -->
+            <div class="flex items-center space-x-4">
+                <select name="bulk_action" form="bulk-form" class="bg-white/20 border-black/10 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest focus:ring-black">
+                    <option value="">Bulk Operations</option>
+                    <option value="activate">Activate Selected</option>
+                    <option value="suspend">Suspend Selected</option>
+                    <option value="delete">Purge Selected</option>
+                </select>
+                <button type="submit" form="bulk-form" class="bg-black text-brand px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition hover:opacity-80">Execute</button>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="bg-black/5 text-black uppercase text-[10px] font-black tracking-widest">
-                        <tr>
-                            <th class="px-10 py-6"><input type="checkbox" onclick="toggleAll(this)" class="rounded border-black/20 text-black"></th>
-                            <th class="px-6 py-6 cursor-pointer hover:text-white transition">
-                                <a href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}" class="no-underline flex items-center">
-                                    Identity @if(request('sort') == 'name') <span class="ml-1">{{ request('direction') == 'asc' ? '↑' : '↓' }}</span> @endif
-                                </a>
-                            </th>
-                            <th x-show="showColumns.email" class="px-6 py-6">Identifier</th>
-                            <th x-show="showColumns.role" class="px-6 py-6">Authority</th>
-                            <th x-show="showColumns.status" class="px-6 py-6">Integrity</th>
-                            <th x-show="showColumns.joined" class="px-6 py-6">Registry Date</th>
-                            <th class="px-10 py-6 text-right">Directives</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-black/5">
-                        @foreach($users as $user)
-                        <tr class="group hover:bg-black/5 transition-colors">
-                            <td class="px-10 py-6">
-                                <input type="checkbox" name="selected_users[]" value="{{ $user->id }}" class="user-checkbox rounded border-black/20 text-black">
-                            </td>
-                            <td class="px-6 py-6">
-                                <div class="flex items-center">
-                                    <div class="h-10 w-10 rounded-full bg-brand text-black font-black flex items-center justify-center border border-black/10 mr-4">
-                                        {{ substr($user->name, 0, 1) }}
-                                    </div>
-                                    <span class="text-sm font-black text-black">{{ $user->name }}</span>
+            <div class="text-[10px] font-black uppercase tracking-widest text-black/40">
+                Total Records: {{ $users->total() }}
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-black/5 text-black uppercase text-[10px] font-black tracking-widest">
+                    <tr>
+                        <th class="px-10 py-6">
+                            <input type="checkbox" id="select-all" class="rounded border-black/20 text-black">
+                        </th>
+                        <th class="px-6 py-6 cursor-pointer hover:text-white transition">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}" class="no-underline flex items-center">
+                                Identity @if(request('sort') == 'name') <span class="ml-1">{{ request('direction') == 'asc' ? '↑' : '↓' }}</span> @endif
+                            </a>
+                        </th>
+                        <th x-show="showColumns.email" class="px-6 py-6">Identifier</th>
+                        <th x-show="showColumns.role" class="px-6 py-6">Authority</th>
+                        <th x-show="showColumns.status" class="px-6 py-6">Integrity</th>
+                        <th x-show="showColumns.joined" class="px-6 py-6">Registry Date</th>
+                        <th class="px-10 py-6 text-right">Directives</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-black/5">
+                    @foreach($users as $user)
+                    <tr class="group hover:bg-black/5 transition-colors">
+                        <td class="px-10 py-6">
+                            <input type="checkbox" name="selected_users[]" value="{{ $user->id }}" form="bulk-form" class="user-checkbox rounded border-black/20 text-black">
+                        </td>
+                        <td class="px-6 py-6">
+                            <div class="flex items-center">
+                                <div class="h-10 w-10 rounded-full bg-brand text-black font-black flex items-center justify-center border border-black/10 mr-4">
+                                    {{ substr($user->name, 0, 1) }}
                                 </div>
-                            </td>
-                            <td x-show="showColumns.email" class="px-6 py-6 text-xs font-bold text-black/60">{{ $user->email }}</td>
-                            <td x-show="showColumns.role" class="px-6 py-6">
-                                <span class="px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-black/10">
-                                    {{ $user->role->name ?? 'User' }}
-                                </span>
-                            </td>
-                            <td x-show="showColumns.status" class="px-6 py-6">
-                                <span class="flex items-center text-[10px] font-black uppercase">
-                                    <span class="h-1.5 w-1.5 rounded-full mr-2 {{ $user->status == 'active' ? 'bg-green-500' : 'bg-red-500' }}"></span>
-                                    {{ $user->status }}
-                                </span>
-                            </td>
-                            <td x-show="showColumns.joined" class="px-6 py-6 text-xs font-bold text-black/40">{{ $user->created_at->format('M d, Y') }}</td>
-                            <td class="px-10 py-6 text-right space-x-4">
-                                <!-- Impersonation (Requirement 14.3) -->
+                                <span class="text-sm font-black text-black">{{ $user->name }}</span>
+                            </div>
+                        </td>
+                        <td x-show="showColumns.email" class="px-6 py-6 text-xs font-bold text-black/60">{{ $user->email }}</td>
+                        <td x-show="showColumns.role" class="px-6 py-6">
+                            <span class="px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-black/10">
+                                {{ $user->role->name ?? 'User' }}
+                            </span>
+                        </td>
+                        <td x-show="showColumns.status" class="px-6 py-6">
+                            <span class="flex items-center text-[10px] font-black uppercase">
+                                <span class="h-1.5 w-1.5 rounded-full mr-2 {{ $user->status == 'active' ? 'bg-green-500' : 'bg-red-500' }}"></span>
+                                {{ $user->status }}
+                            </span>
+                        </td>
+                        <td x-show="showColumns.joined" class="px-6 py-6 text-xs font-bold text-black/40">{{ $user->created_at->format('M d, Y') }}</td>
+                        <td class="px-10 py-6 text-right space-x-4">
+                            <!-- Impersonation Directive Safeguard (Requirement 14.3) -->
+                            @if(Route::has('admin.users.impersonate'))
                                 <a href="{{ route('admin.users.impersonate', $user) }}" title="Secure Impersonation" class="text-black/40 hover:text-black transition">
                                     <svg class="h-4 w-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                 </a>
-                                <a href="{{ route('admin.users.edit', $user) }}" class="text-black font-black text-[10px] uppercase tracking-widest no-underline border-b-2 border-black">Configure</a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                            @elseif(Route::has('impersonate'))
+                                <a href="{{ route('impersonate', $user->id) }}" title="Secure Impersonation" class="text-black/40 hover:text-black transition">
+                                    <svg class="h-4 w-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                </a>
+                            @endif
+
+                            <a href="{{ route('admin.users.edit', $user) }}" class="text-black font-black text-[10px] uppercase tracking-widest no-underline border-b-2 border-black">Configure</a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-    </form>
+    </div>
 
     <div class="mt-8">
         {{ $users->links() }}
@@ -172,12 +182,19 @@
 
 @push('scripts')
 <script>
-    function toggleAll(source) {
-        checkboxes = document.getElementsByClassName('user-checkbox');
-        for(var i=0, n=checkboxes.length;i<n;i++) {
-            checkboxes[i].checked = source.checked;
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('select-all');
+        const checkboxes = document.getElementsByClassName('user-checkbox');
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                for (let i = 0; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = this.checked;
+                }
+            });
         }
-    }
+    });
 </script>
 @endpush
 @endsection
+
