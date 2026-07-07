@@ -38,8 +38,8 @@
     <section>
         <div class="flex justify-between items-end mb-12">
             <div>
-                <h2 class="text-xs font-black text-[#1A1A1A] uppercase tracking-[0.4em] opacity-40 mb-2">Priority Assets</h2>
-                <p class="text-2xl font-black text-[#1A1A1A] uppercase tracking-tighter">High Yield Inventory</p>
+                <h2 class="text-xs font-black text-[#1A1A1A] uppercase tracking-[0.4em] opacity-40 mb-2">Priority Products</h2>
+                <p class="text-2xl font-black text-[#1A1A1A] uppercase tracking-tighter">High Yield Catalog</p>
             </div>
             <a href="{{ route('loan_products.index') }}" class="text-[#FF6B00] font-black text-xs uppercase tracking-widest no-underline border-b-4 border-[#FF6B00] pb-2 hover:opacity-60 transition">Explore Loan Management →</a>
         </div>

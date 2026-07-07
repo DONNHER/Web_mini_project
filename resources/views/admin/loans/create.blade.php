@@ -78,13 +78,13 @@
                     <x-input-error :messages="$errors->get('user_id')" />
                 </div>
 
-                <!-- Asset Selection -->
+                <!-- Product Selection -->
                 <div class="space-y-4">
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#FF6B00]">Asset Template</label>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#FF6B00]">Loan Product</label>
                     <select name="loan_product_id"
                             @change="updateProduct($event.target.value)"
                             class="w-full bg-[#1A1A1A] border-none rounded-2xl px-8 py-5 text-white font-bold focus:ring-4 focus:ring-[#FF6B00]/20 appearance-none">
-                        <option value="">Select Configuration</option>
+                        <option value="">Select Product</option>
                         @foreach($loanProducts as $product)
                             <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->interest_rate }}%)</option>
                         @endforeach

@@ -13,9 +13,6 @@
                     <a href="{{ route('admin.loans.create') }}" class="btn-primary px-8 no-underline shadow-xl">
                         Add Loan
                     </a>
-                    <a href="{{ route('admin.loan-products.create') }}" class="btn-secondary px-8 no-underline">
-                        Register Asset
-                    </a>
                     <a href="{{ request()->fullUrlWithQuery(['trashed' => request('trashed') ? null : 1]) }}"
                        class="btn-secondary px-6 py-3 text-[8px] tracking-[0.2em] no-underline">
                         {{ request('trashed') ? 'Active Ledger' : 'Archive Registry' }}

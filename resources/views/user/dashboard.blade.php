@@ -40,7 +40,7 @@
             <p class="text-4xl font-black text-[#1A1A1A] group-hover:text-[#FF6B00] transition-colors">{{ $totalLoans }}</p>
         </div>
         <div class="card p-8 group hover:border-[#FF6B00]/30 transition-colors">
-            <p class="text-[#1A1A1A]/40 text-[10px] font-black uppercase tracking-widest mb-4">Active Assets</p>
+            <p class="text-[#1A1A1A]/40 text-[10px] font-black uppercase tracking-widest mb-4">Active Loans</p>
             <p class="text-4xl font-black text-[#1A1A1A] group-hover:text-[#FF6B00] transition-colors">{{ $activeLoans }}</p>
         </div>
         <div class="card p-8 group hover:border-[#FF6B00]/30 transition-colors">
