@@ -51,18 +51,18 @@
         }
     }
 }">
-    <div class="card p-12 bg-black text-white border-none shadow-2xl rounded-[3rem]">
+    <div class="card p-12 bg-white border border-[#1A1A1A]/5 shadow-2xl rounded-[3rem]">
         <form action="{{ route('admin.loans.store') }}" method="POST" class="space-y-10">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <!-- Borrower Selection -->
                 <div class="space-y-4">
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#FF6B00]">Primary Borrower</label>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1A1A]/40">Primary Borrower</label>
                     <div class="relative">
                         <input type="text" list="borrower-list"
-                               placeholder="Search identities..."
-                               class="w-full bg-[#1A1A1A] border-none rounded-2xl px-8 py-5 text-white font-bold focus:ring-4 focus:ring-[#FF6B00]/20"
+                               placeholder="Scan identities..."
+                               class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-5 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5"
                                @change="updateBorrower($event.target.value)">
                         <input type="hidden" name="user_id" :value="borrowerId">
                         <datalist id="borrower-list">
@@ -72,7 +72,7 @@
                         </datalist>
                     </div>
                     <div x-show="selectedUser" class="mt-2 flex items-center space-x-2">
-                        <span class="text-[8px] font-black uppercase text-white/40 tracking-widest">Shareholder Capital:</span>
+                        <span class="text-[8px] font-black uppercase text-[#1A1A1A]/30 tracking-widest">Shareholder Capital:</span>
                         <span class="text-[10px] font-black text-[#FF6B00]" x-text="'₱' + Number(selectedUser ? selectedUser.shareholder_capital : 0).toLocaleString()"></span>
                     </div>
                     <x-input-error :messages="$errors->get('user_id')" />
@@ -80,10 +80,10 @@
 
                 <!-- Product Selection -->
                 <div class="space-y-4">
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#FF6B00]">Loan Product</label>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1A1A]/40">Loan Product</label>
                     <select name="loan_product_id"
                             @change="updateProduct($event.target.value)"
-                            class="w-full bg-[#1A1A1A] border-none rounded-2xl px-8 py-5 text-white font-bold focus:ring-4 focus:ring-[#FF6B00]/20 appearance-none">
+                            class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-5 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 appearance-none">
                         <option value="">Select Product</option>
                         @foreach($loanProducts as $product)
                             <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->interest_rate }}%)</option>
@@ -96,8 +96,8 @@
             <!-- Amount Slider -->
             <div class="space-y-6" x-show="selectedProduct && selectedUser">
                 <div class="flex justify-between items-end">
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#FF6B00]">Requested Capital</label>
-                    <div class="text-4xl font-black text-white">
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1A1A]/40">Requested Capital</label>
+                    <div class="text-4xl font-black text-[#1A1A1A]">
                         ₱<span x-text="Number(amount).toLocaleString()"></span>
                     </div>
                 </div>
@@ -105,8 +105,8 @@
                        :min="selectedProduct ? selectedProduct.min_amount : 0"
                        :max="maxBorrowingCapacity"
                        x-model="amount"
-                       class="w-full h-3 bg-[#1A1A1A] rounded-lg appearance-none cursor-pointer accent-[#FF6B00]">
-                <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/20">
+                       class="w-full h-3 bg-[#FEF6F0] rounded-lg appearance-none cursor-pointer accent-[#FF6B00]">
+                <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-[#1A1A1A]/20">
                     <span x-text="'Min: ₱' + Number(selectedProduct ? selectedProduct.min_amount : 0).toLocaleString()"></span>
                     <span class="text-[#FF6B00]" x-text="'Max Capacity (10x Capital): ₱' + Number(maxBorrowingCapacity).toLocaleString()"></span>
                 </div>
@@ -114,20 +114,20 @@
 
             <!-- Purpose -->
             <div class="space-y-4">
-                <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#FF6B00]">Registry Purpose</label>
+                <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1A1A]/40">Registry Purpose</label>
                 <textarea name="purpose" rows="3"
                           placeholder="State the objective of this capital deployment..."
-                          class="w-full bg-[#1A1A1A] border-none rounded-2xl px-8 py-5 text-white font-bold focus:ring-4 focus:ring-[#FF6B00]/20 placeholder-white/10">{{ old('purpose') }}</textarea>
+                          class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-5 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5 placeholder-[#1A1A1A]/20">{{ old('purpose') }}</textarea>
                 <x-input-error :messages="$errors->get('purpose')" />
             </div>
 
             <!-- Co-makers -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 pt-8 border-t border-white/5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 pt-8 border-t border-[#1A1A1A]/5">
                 <div class="space-y-4">
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#FF6B00]">Primary Co-maker</label>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1A1A]/40">Primary Co-maker</label>
                     <input type="text" list="comaker-list-1"
                            placeholder="Search secondary node..."
-                           class="w-full bg-[#1A1A1A] border-none rounded-2xl px-8 py-5 text-white font-bold focus:ring-4 focus:ring-[#FF6B00]/20"
+                           class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-5 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5"
                            @change="comaker1Id = $event.target.value.split(' - ')[0]">
                     <input type="hidden" name="comaker_1_id" :value="comaker1Id">
                     <datalist id="comaker-list-1">
@@ -138,10 +138,10 @@
                 </div>
 
                 <div class="space-y-4">
-                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#FF6B00]">Secondary Co-maker</label>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1A1A]/40">Secondary Co-maker</label>
                     <input type="text" list="comaker-list-2"
                            placeholder="Search tertiary node..."
-                           class="w-full bg-[#1A1A1A] border-none rounded-2xl px-8 py-5 text-white font-bold focus:ring-4 focus:ring-[#FF6B00]/20"
+                           class="w-full bg-[#FEF6F0] border-none rounded-2xl px-8 py-5 text-[#1A1A1A] font-bold focus:ring-4 focus:ring-[#FF6B00]/5"
                            @change="comaker2Id = $event.target.value.split(' - ')[0]">
                     <input type="hidden" name="comaker_2_id" :value="comaker2Id">
                     <datalist id="comaker-list-2">
@@ -153,7 +153,7 @@
             </div>
 
             <div class="flex justify-end pt-12">
-                <button type="submit" class="btn-primary px-16 py-6 rounded-3xl text-sm shadow-2xl shadow-[#FF6B00]/20">
+                <button type="submit" class="btn-primary px-16 py-6 rounded-3xl text-sm shadow-2xl shadow-[#FF6B00]/20 uppercase font-black tracking-widest">
                     Initialize Protocol
                 </button>
             </div>

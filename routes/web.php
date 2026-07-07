@@ -74,6 +74,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/users/import', [DataPortabilityController::class, 'importUsers'])->name('users.import');
 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::get('/loan-products/create', function() {
+        return redirect()->route('loan_products.index');
+    });
     Route::resource('loan-products', LoanProductController::class)->except(['index', 'show', 'create', 'store']);
     Route::post('loan-products/{id}/restore', [LoanProductController::class, 'restore'])->name('loan-products.restore');
 
