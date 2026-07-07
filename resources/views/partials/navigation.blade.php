@@ -3,7 +3,7 @@
         <div class="flex justify-between h-20">
             <div class="flex items-center">
                 <!-- Logo -->
-                <a href="{{ route('home') }}" class="flex items-center no-underline group">
+                <a href="{{ auth()->check() && auth()->user()->isAdmin() ? route('admin.dashboard') : route('home') }}" class="flex items-center no-underline group">
                     <div class="bg-[#FF6B00] w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
                         <span class="text-white font-black text-xs tracking-tighter">PIL</span>
                     </div>
@@ -11,15 +11,27 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden md:flex ml-10 space-x-1">
-                    <a href="{{ route('home') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] hover:bg-[#FF6B00]/5 px-4 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">
-                        Home
-                    </a>
+                    @guest
+                        <a href="{{ route('home') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] hover:bg-[#FF6B00]/5 px-4 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">
+                            Home
+                        </a>
+                    @else
+                        @if(!auth()->user()->isAdmin())
+                            <a href="{{ route('home') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] hover:bg-[#FF6B00]/5 px-4 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">
+                                Home
+                            </a>
+                        @endif
+                    @endguest
+
                     <a href="{{ route('loan_products.index') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] hover:bg-[#FF6B00]/5 px-4 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">
                         Loan Management
                     </a>
 
                     @auth
                         @if(auth()->user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] hover:bg-[#FF6B00]/5 px-4 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">
+                                Dashboard
+                            </a>
                             <a href="{{ route('admin.users.index') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] hover:bg-[#FF6B00]/5 px-4 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">
                                 Users
                             </a>
@@ -61,8 +73,6 @@
 
                         @if(!auth()->user()->isAdmin())
                             <a href="{{ route('user.dashboard') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] px-3 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">Dashboard</a>
-                        @else
-                            <a href="{{ route('admin.dashboard') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] px-3 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">Dashboard</a>
                         @endif
 
                         <div class="h-8 w-px bg-[#FFEDD5] mx-2"></div>
@@ -101,13 +111,23 @@
         </div>
     </div>
 
-    <!-- Mobile Menu -->
     <div x-show="mobileMenuOpen" x-cloak x-transition class="md:hidden bg-white border-t border-[#FFEDD5]" style="display: none;">
         <div class="px-4 pt-2 pb-6 space-y-2">
-            <a href="{{ route('home') }}" class="block px-4 py-3 text-[#1A1A1A] font-black uppercase text-[10px] tracking-widest no-underline">Home</a>
+            @guest
+                <a href="{{ route('home') }}" class="block px-4 py-3 text-[#1A1A1A] font-black uppercase text-[10px] tracking-widest no-underline">Home</a>
+            @else
+                @if(!auth()->user()->isAdmin())
+                    <a href="{{ route('home') }}" class="block px-4 py-3 text-[#1A1A1A] font-black uppercase text-[10px] tracking-widest no-underline">Home</a>
+                @else
+                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 text-[#1A1A1A] font-black uppercase text-[10px] tracking-widest no-underline">Dashboard</a>
+                @endif
+            @endguest
+
             <a href="{{ route('loan_products.index') }}" class="block px-4 py-3 text-[#1A1A1A] font-black uppercase text-[10px] tracking-widest no-underline">Loan Management</a>
             @auth
-                <a href="{{ route('user.dashboard') }}" class="block px-4 py-3 text-[#1A1A1A] font-black uppercase text-[10px] tracking-widest no-underline">Dashboard</a>
+                @if(!auth()->user()->isAdmin())
+                    <a href="{{ route('user.dashboard') }}" class="block px-4 py-3 text-[#1A1A1A] font-black uppercase text-[10px] tracking-widest no-underline">Dashboard</a>
+                @endif
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="w-full text-left px-4 py-3 text-red-500 font-black uppercase text-[10px] tracking-widest">Sign Out</button>
