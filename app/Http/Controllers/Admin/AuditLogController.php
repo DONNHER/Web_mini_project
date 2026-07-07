@@ -56,7 +56,7 @@ class AuditLogController extends Controller
         $audits = $query->paginate(25);
 
         $modelTypes = [
-            'LoanProduct' => 'Loan Products',
+            'LoanProduct' => 'Loan Management',
             'User' => 'Users',
             'LoanCategory' => 'Loan Categories',
             'Loan' => 'Loans',

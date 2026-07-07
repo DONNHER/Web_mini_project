@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Dashboard')
 
 @section('header')
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -72,7 +72,7 @@
                     <svg class="w-4 h-4 text-[#FF6B00] group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
                 </a>
                 <a href="{{ route('admin.loans.index') }}" class="group flex items-center justify-between p-4 bg-[#FEF6F0] rounded-2xl hover:bg-[#FF6B00] transition-all duration-300 no-underline">
-                    <span class="text-[#1A1A1A] text-[10px] font-black uppercase tracking-widest group-hover:text-white transition">Audit Assets</span>
+                    <span class="text-[#1A1A1A] text-[10px] font-black uppercase tracking-widest group-hover:text-white transition">Loan Management</span>
                     <svg class="w-4 h-4 text-[#FF6B00] group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
                 </a>
                 <a href="{{ route('admin.audit-logs.index') }}" class="group flex items-center justify-between p-4 bg-[#FEF6F0] rounded-2xl hover:bg-[#FF6B00] transition-all duration-300 no-underline">

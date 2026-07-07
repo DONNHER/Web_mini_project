@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Audit Logs')
+@section('title', 'Audit Logs')
 
 @section('header')
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">

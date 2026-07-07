@@ -1,18 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Loan Products')
+@section('title', 'Loan Management')
 
 @section('header')
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-            <h1 class="text-4xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Loan Products</h1>
+            <h1 class="text-4xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Loan Management</h1>
         </div>
         @auth
             @if(auth()->user()->isAdmin())
-                <a href="{{ request()->fullUrlWithQuery(['trashed' => request('trashed') ? null : 1]) }}"
-                   class="btn-secondary px-6 py-3 text-[8px] tracking-[0.2em] no-underline">
-                    {{ request('trashed') ? 'Active Ledger' : 'Archive Registry' }}
-                </a>
+                <div class="flex space-x-3">
+                    <a href="{{ route('admin.loan-products.create') }}" class="btn-primary px-8 no-underline shadow-xl">
+                        Add Loan
+                    </a>
+                    <a href="{{ request()->fullUrlWithQuery(['trashed' => request('trashed') ? null : 1]) }}"
+                       class="btn-secondary px-6 py-3 text-[8px] tracking-[0.2em] no-underline">
+                        {{ request('trashed') ? 'Active Ledger' : 'Archive Registry' }}
+                    </a>
+                </div>
             @endif
         @endauth
     </div>
