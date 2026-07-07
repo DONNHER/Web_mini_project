@@ -21,23 +21,23 @@
         @include('partials.navigation')
 
         <!-- Page Heading -->
-        @hasSection('header')
-            <header class="bg-white/50 backdrop-blur-sm border-b border-[#FFEDD5]">
-                <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                    @yield('header')
-                </div>
-            </header>
-        @endif
+    @hasSection('header')
+        <header class="bg-white/50 backdrop-blur-sm border-b border-black/5">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                @yield('header')
+            </div>
+        </header>
+    @endif
 
         <!-- Flash Messages -->
         @include('partials.flash-messages')
 
-        <!-- Page Content -->
-        <main class="py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                @yield('content')
-            </div>
-        </main>
+    <!-- Page Content -->
+    <main class="py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            @yield('content')
+        </div>
+    </main>
     </div>
 
     <!-- Real-time Notification Component -->

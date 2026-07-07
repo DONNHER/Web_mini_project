@@ -23,35 +23,30 @@
 @layer base {
   body {
     background-color: #FEF6F0;
-    color: #1A1A1A;
-    @apply font-sans antialiased;
+    color: #000000;
+    @apply font-sans antialiased text-sm;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000;
   }
 }
 
 @layer components {
   .card {
-    @apply bg-white border border-brand/5 shadow-xl shadow-brand/5;
-    border-radius: 2rem;
+    @apply bg-white border border-black/5 shadow-md;
+    border-radius: 1rem;
   }
 
   .btn-primary {
-    @apply bg-brand text-white font-black uppercase tracking-widest text-xs inline-flex items-center justify-center transition-all duration-200;
-    border-radius: 1rem;
-    padding: 1rem 2rem;
+    @apply bg-brand text-white font-black uppercase tracking-widest text-[10px] inline-flex items-center justify-center transition-all duration-200;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.5rem;
   }
 
   .btn-secondary {
-    @apply bg-white text-brand border border-brand font-black uppercase tracking-widest text-xs inline-flex items-center justify-center transition-all duration-200;
-    border-radius: 1rem;
-    padding: 1rem 2rem;
-  }
-
-  .logo-box {
-    @apply flex items-center justify-center;
-    width: 5rem;
-    height: 5rem;
-    border-radius: 1.5rem;
-    background: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
-    box-shadow: 0 10px 25px -5px rgba(255, 107, 0, 0.4);
+    @apply bg-white text-black border border-black/10 font-black uppercase tracking-widest text-[10px] inline-flex items-center justify-center transition-all duration-200;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.5rem;
   }
 }
