@@ -28,11 +28,16 @@
     <div id="chat-window" class="flex-1 overflow-y-auto p-10 space-y-6 bg-white">
         @forelse($messages as $msg)
             <div class="flex {{ $msg['role'] === 'user' ? 'justify-end' : 'justify-start' }}">
-                <div class="max-w-[70%] rounded-2xl px-6 py-4 text-sm font-bold leading-relaxed shadow-sm
-                    {{ $msg['role'] === 'user'
-                        ? 'bg-[#1A1A1A] text-white rounded-tr-none'
-                        : 'bg-[#FEF6F0] text-[#1A1A1A] border border-[#1A1A1A]/5 rounded-tl-none' }}">
-                    {!! nl2br(e($msg['content'])) !!}
+                <div class="flex flex-col {{ $msg['role'] === 'user' ? 'items-end' : 'items-start' }} max-w-[70%]">
+                    @if($msg['role'] !== 'user')
+                        <span class="text-[8px] font-black text-[#FF6B00] uppercase tracking-[0.2em] mb-1 ml-1">SYSTEM NODE</span>
+                    @endif
+                    <div class="rounded-2xl px-6 py-4 text-sm font-bold leading-relaxed shadow-sm
+                        {{ $msg['role'] === 'user'
+                            ? 'bg-[#1A1A1A] text-white rounded-tr-none'
+                            : 'bg-[#FEF6F0] text-[#1A1A1A] border border-[#1A1A1A]/5 rounded-tl-none' }}">
+                        {!! nl2br(e($msg['content'])) !!}
+                    </div>
                 </div>
             </div>
         @empty
@@ -121,12 +126,16 @@
 
             const data = await response.json();
 
-            // Append AI response
+            // Append AI response with Provider Metadata
+            const providerName = data.provider ? data.provider.toUpperCase() : 'SYSTEM';
             const aiDiv = document.createElement('div');
             aiDiv.className = 'flex justify-start';
             aiDiv.innerHTML = `
-                <div class="max-w-[70%] rounded-2xl px-6 py-4 text-sm font-bold leading-relaxed shadow-sm bg-[#FEF6F0] text-[#1A1A1A] border border-[#1A1A1A]/5 rounded-tl-none animate-in fade-in slide-in-from-bottom-2 duration-500">
-                    ${data.message.replace(/\n/g, '<br>')}
+                <div class="flex flex-col max-w-[70%]">
+                    <span class="text-[8px] font-black text-[#FF6B00] uppercase tracking-[0.2em] mb-1 ml-1">${providerName} NODE</span>
+                    <div class="rounded-2xl px-6 py-4 text-sm font-bold leading-relaxed shadow-sm bg-[#FEF6F0] text-[#1A1A1A] border border-[#1A1A1A]/5 rounded-tl-none animate-in fade-in slide-in-from-bottom-2 duration-500">
+                        ${data.message.replace(/\n/g, '<br>')}
+                    </div>
                 </div>
             `;
             chatWindow.appendChild(aiDiv);

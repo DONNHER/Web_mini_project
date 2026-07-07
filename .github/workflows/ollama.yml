@@ -1,0 +1,57 @@
+name: Ollama Intelligence Check
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'app/Services/AI/**'
+      - 'config/ai.php'
+
+jobs:
+  ollama-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Start Ollama Service
+        run: |
+          ollama serve &
+          # Wait for server to initialize
+          sleep 10
+
+      - name: Pull Lightweight Model
+        run: |
+          # Pulling tinyllama for speed in workflow
+          ollama pull tinyllama
+
+      - name: Execute Directive
+        id: ai_run
+        run: |
+          # Execute "hi" directive and capture output into a string variable
+          AI_OUTPUT=$(ollama run tinyllama "hi")
+          echo "Output captured successfully."
+
+          # Clean string (remove potential ANSI codes/garbage)
+          CLEAN_OUTPUT=$(echo "$AI_OUTPUT" | tr -cd '[:print:]\n')
+
+          # Store in GitHub Environment for later steps if needed
+          echo "OLLAMA_RESPONSE=$CLEAN_OUTPUT" >> $GITHUB_ENV
+
+          # Print for verification
+          echo "--- OLLAMA RESPONSE START ---"
+          echo "$CLEAN_OUTPUT"
+          echo "--- OLLAMA RESPONSE END ---"
+
+      - name: Verify Response Integrity
+        run: |
+          if [ -z "$OLLAMA_RESPONSE" ]; then
+            echo "Error: AI response is null."
+            exit 1
+          fi
+          echo "Neural Link Verified."
