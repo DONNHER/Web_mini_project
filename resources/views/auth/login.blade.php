@@ -23,7 +23,6 @@
                 <div class="bg-[#FF6B00] w-20 h-20 rounded-2xl flex items-center justify-center shadow-2xl shadow-orange-500/30 mx-auto mb-6">
                     <span class="text-white font-black text-3xl tracking-tighter">PIL</span>
                 </div>
-                <h2 class="text-[#FF6B00] font-black text-2xl tracking-tight mb-2">PIL</h2>
                 <p class="text-black/40 text-[10px] font-black uppercase tracking-[0.4em]">Point of Sale and Lending System</p>
             </div>
         </div>
@@ -43,7 +42,7 @@
                     <p class="text-black/40 text-sm font-bold tracking-tight">Sign in to access your PIL dashboard</p>
                 </div>
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                <form method="POST" action="{{ route('login.post') }}" class="space-y-6">
                     @csrf
 
                     <!-- Email Address -->
