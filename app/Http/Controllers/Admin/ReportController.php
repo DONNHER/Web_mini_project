@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Audit;
 use App\Models\Loan;
 use App\Models\User;
-use App\Models\LoanCategory;
 use App\Models\ReportConfiguration;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -22,10 +21,9 @@ class ReportController extends Controller
     public function index()
     {
         $favorites = ReportConfiguration::where('user_id', auth()->id())->where('is_favorite', true)->get();
-        $categories = LoanCategory::all();
         $users = User::all();
 
-        return view('admin.reports.index', compact('favorites', 'categories', 'users'));
+        return view('admin.reports.index', compact('favorites', 'users'));
     }
 
     public function generate(Request $request)

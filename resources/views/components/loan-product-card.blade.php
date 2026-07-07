@@ -12,7 +12,6 @@
             <div class="bg-[#FFEDD5] p-3 rounded-2xl text-[#FF6B00]">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
             </div>
-            <span class="text-[9px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]/40">{{ $product->category?->name }}</span>
         </div>
 
         <h3 class="text-2xl font-black text-[#1A1A1A] mb-2 uppercase tracking-tighter group-hover:text-[#FF6B00] transition-colors leading-none">{{ $product->name }}</h3>

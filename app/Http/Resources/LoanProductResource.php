@@ -17,7 +17,6 @@ class LoanProductResource extends JsonResource
             'duration_months' => $this->duration_months,
             'min_amount' => $this->min_amount,
             'max_amount' => $this->max_amount,
-            'category' => new LoanCategoryResource($this->whenLoaded('category')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

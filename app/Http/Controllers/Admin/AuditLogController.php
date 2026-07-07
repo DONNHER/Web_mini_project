@@ -58,7 +58,6 @@ class AuditLogController extends Controller
         $modelTypes = [
             'LoanProduct' => 'Loan Management',
             'User' => 'Users',
-            'LoanCategory' => 'Loan Categories',
             'Loan' => 'Loans',
             'Repayment' => 'Repayments',
             'ImportExportLog' => 'Import/Export Logs',

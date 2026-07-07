@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Role;
-use App\Models\LoanCategory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -45,15 +44,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 5. Seed Loan Categories and Products
+        // 5. Seed Loan Products
         $this->call([
-            LoanCategorySeeder::class,
             LoanProductSeeder::class,
         ]);
-
-        // 6. Warm up cache for categories
-        LoanCategory::all()->each(function ($category) {
-            \App\Jobs\WarmCategoryCache::dispatch($category->id);
-        });
     }
 }

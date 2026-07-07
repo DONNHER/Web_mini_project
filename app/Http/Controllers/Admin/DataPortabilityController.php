@@ -7,7 +7,6 @@ use App\Imports\LoanProductsImport;
 use App\Exports\LoanProductsExport;
 use App\Imports\UsersImport;
 use App\Exports\UsersExport;
-use App\Models\LoanCategory;
 use App\Models\ImportExportLog;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,9 +17,8 @@ class DataPortabilityController extends Controller
 {
     public function index()
     {
-        $categories = LoanCategory::all();
         $logs = ImportExportLog::with('user')->latest()->take(10)->get();
-        return view('admin.data-portability.index', compact('categories', 'logs'));
+        return view('admin.data-portability.index', compact('logs'));
     }
 
     public function import(Request $request)

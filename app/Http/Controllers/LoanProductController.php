@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\LoanProduct;
-use App\Models\LoanCategory;
 use App\Repositories\LoanProductRepository;
 use Illuminate\Http\Request;
 
@@ -20,17 +19,13 @@ class LoanProductController extends Controller
     {
         $query = $request->has('trashed') ? LoanProduct::onlyTrashed() : LoanProduct::query();
 
-        if ($request->has('category') && $request->category != '') {
-            $loanProducts = $query->where('category_id', $request->category)->paginate(100);
-        } elseif ($request->has('search') && $request->search != '') {
+        if ($request->has('search') && $request->search != '') {
             $loanProducts = $query->where('name', 'like', "%{$request->search}%")->paginate(100);
         } else {
             $loanProducts = $query->paginate(100);
         }
 
-        $categories = LoanCategory::all();
-
-        return view('loan_products.index', compact('loanProducts', 'categories'));
+        return view('loan_products.index', compact('loanProducts'));
     }
 
     public function restore($id)
@@ -44,14 +39,12 @@ class LoanProductController extends Controller
 
     public function create()
     {
-        $categories = LoanCategory::all();
-        return view('loan_products.create', compact('categories'));
+        return view('loan_products.create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category_id' => 'required|exists:loan_categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'interest_rate' => 'required|numeric|min:0',
@@ -68,20 +61,17 @@ class LoanProductController extends Controller
 
     public function show(LoanProduct $loanProduct)
     {
-        $loanProduct->load(['category']);
         return view('loan_products.show', compact('loanProduct'));
     }
 
     public function edit(LoanProduct $loanProduct)
     {
-        $categories = LoanCategory::all();
-        return view('loan_products.edit', compact('loanProduct', 'categories'));
+        return view('loan_products.edit', compact('loanProduct'));
     }
 
     public function update(Request $request, LoanProduct $loanProduct)
     {
         $validated = $request->validate([
-            'category_id' => 'required|exists:loan_categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'interest_rate' => 'required|numeric|min:0',

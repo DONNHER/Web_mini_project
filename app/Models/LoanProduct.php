@@ -30,7 +30,6 @@ class LoanProduct extends Model implements Auditable
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'category' => $this->category?->name,
         ];
     }
 
@@ -43,7 +42,6 @@ class LoanProduct extends Model implements Auditable
     }
 
     protected $fillable = [
-        'category_id',
         'name',
         'description',
         'interest_rate',
@@ -52,11 +50,6 @@ class LoanProduct extends Model implements Auditable
         'max_amount',
         'is_active',
     ];
-
-    public function category()
-    {
-        return $this->belongsTo(LoanCategory::class, 'category_id');
-    }
 
     public function loans()
     {

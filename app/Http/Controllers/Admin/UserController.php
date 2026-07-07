@@ -80,6 +80,16 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Account generated.');
     }
 
+    public function show(User $user)
+    {
+        $user->load(['role', 'loans.loanProduct']);
+
+        // Activity Analytics
+        $lastActive = Audit::where('user_id', $user->id)->latest()->first()?->created_at;
+
+        return view('admin.users.show', compact('user', 'lastActive'));
+    }
+
     public function edit(User $user)
     {
         $roles = Role::all();

@@ -21,19 +21,6 @@
                     @error('name') <p class="text-white text-[10px] mt-2 font-black uppercase">{{ $message }}</p> @enderror
                 </div>
 
-                <div>
-                    <label for="category_id" class="block text-[10px] font-black uppercase tracking-widest mb-3 opacity-40">Classification *</label>
-                    <select name="category_id" id="category_id"
-                            class="w-full bg-brand/10 border-brand/20 rounded-xl text-white font-bold p-3 focus:ring-white"
-                            required>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ old('category_id', $loanProduct->category_id) == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
                 <div class="grid grid-cols-2 gap-8">
                     <div>
                         <label for="interest_rate" class="block text-[10px] font-black uppercase tracking-widest mb-3 opacity-40">Interest Rate (%) *</label>

@@ -170,7 +170,7 @@
                                 </a>
                             @endif
 
-                            <a href="{{ route('admin.users.edit', $user) }}" class="text-black font-black text-[10px] uppercase tracking-widest no-underline border-b-2 border-black">Configure</a>
+                            <a href="{{ route('admin.users.show', $user) }}" class="text-black font-black text-[10px] uppercase tracking-widest no-underline border-b-2 border-black">View Details</a>
                         </td>
                     </tr>
                     @endforeach

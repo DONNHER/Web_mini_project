@@ -2,7 +2,6 @@
 
 namespace App\Services\AI;
 
-use App\Models\LoanCategory;
 use App\Models\LoanProduct;
 use Illuminate\Support\Facades\Log;
 
@@ -16,48 +15,47 @@ class CategorizationService
     }
 
     /**
-     * Categorize a user's intent or description into an existing Loan Category.
+     * Categorize a user's intent or description into an existing Loan Product.
      */
     public function categorizeLoanIntent(string $description): array
     {
-        $categories = LoanCategory::all(['id', 'name', 'description'])->toArray();
-        $categoriesJson = json_encode($categories);
+        $products = LoanProduct::where('is_active', true)->get(['id', 'name', 'description'])->toArray();
+        $productsJson = json_encode($products);
 
         $prompt = "You are a Customer Service AI for 'LendingSystem'.
         A user has described their loan need: \"{$description}\"
 
-        Based on these available loan categories, pick the most relevant one:
-        {$categoriesJson}
+        Based on these available loan products, pick the most relevant one:
+        {$productsJson}
 
         Respond ONLY in a structured JSON format with:
-        'category_id' (The ID of the best matching category),
+        'product_id' (The ID of the best matching product),
         'confidence_score' (0-100),
-        'reason' (A short explanation why this category fits).";
+        'reason' (A short explanation why this product fits).";
 
         try {
             $aiResult = $this->aiManager->generateWithFallback($prompt, 'categorization');
             $data = $this->parseJsonResponse($aiResult['text']);
 
-            $categoryId = $data['category_id'] ?? null;
+            $productId = $data['product_id'] ?? null;
             $suggestedProducts = [];
 
-            if ($categoryId) {
-                $suggestedProducts = LoanProduct::where('category_id', $categoryId)
-                    ->where('is_active', true)
-                    ->limit(2)
-                    ->get();
+            if ($productId) {
+                $suggestedProducts = LoanProduct::where('id', $productId)->get();
             }
 
             return [
-                'category_id' => $categoryId,
+                'product_id' => $productId,
+                'category_id' => $productId, // Keep for backward compatibility with UI if needed
                 'confidence_score' => $data['confidence_score'] ?? 0,
-                'reason' => $data['reason'] ?? 'Unable to determine category.',
+                'reason' => $data['reason'] ?? 'Unable to determine product.',
                 'suggested_products' => $suggestedProducts,
                 'provider' => $aiResult['provider']
             ];
         } catch (\Exception $e) {
             Log::error("Categorization failed: " . $e->getMessage());
             return [
+                'product_id' => null,
                 'category_id' => null,
                 'confidence_score' => 0,
                 'reason' => 'AI Service error',

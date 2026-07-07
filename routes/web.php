@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\LoanProductController;
-use App\Http\Controllers\LoanCategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ProfileController;

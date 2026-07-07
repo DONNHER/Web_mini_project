@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\LoanProduct;
-use App\Models\LoanCategory;
 use App\Models\ImportExportLog;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -32,14 +31,7 @@ class LoanProductsImport implements ToModel, WithHeadingRow, WithValidation, Wit
 
     public function model(array $row)
     {
-        $category = LoanCategory::where('name', $row['category'])->first();
-
-        if (!$category) {
-            return null;
-        }
-
         $data = [
-            'category_id'     => $category->id,
             'name'            => $row['name'],
             'description'     => $row['description'] ?? null,
             'interest_rate'   => $row['interest_rate'],
@@ -67,7 +59,6 @@ class LoanProductsImport implements ToModel, WithHeadingRow, WithValidation, Wit
             'duration'        => 'required|integer|min:1',
             'min_amount'      => 'required|numeric|min:0',
             'max_amount'      => 'required|numeric|gte:min_amount',
-            'category'        => 'required|exists:loan_categories,name',
         ];
     }
 

@@ -63,16 +63,7 @@
             </h2>
 
             <form action="{{ route('admin.export') }}" method="GET" class="space-y-8">
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest opacity-40 mb-3">Asset Category</label>
-                        <select name="category" class="w-full bg-white/20 border-black/10 rounded-xl text-black font-bold p-3">
-                            <option value="">All Assets</option>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                <div class="grid grid-cols-1 gap-6">
                     <div>
                         <label class="block text-[10px] font-black uppercase tracking-widest opacity-40 mb-3">Format Output</label>
                         <select name="format" class="w-full bg-white/20 border-black/10 rounded-xl text-black font-bold p-3">

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\LoanProduct;
-use App\Models\LoanCategory;
 use App\Models\Loan;
 use App\Models\Audit;
 use Illuminate\Http\Request;

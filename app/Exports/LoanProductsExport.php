@@ -19,11 +19,7 @@ class LoanProductsExport implements FromQuery, WithHeadings, WithMapping, WithCh
 
     public function query()
     {
-        $query = LoanProduct::with('category');
-
-        if (!empty($this->filters['category'])) {
-            $query->where('category_id', $this->filters['category']);
-        }
+        $query = LoanProduct::query();
 
         return $query;
     }
@@ -33,7 +29,6 @@ class LoanProductsExport implements FromQuery, WithHeadings, WithMapping, WithCh
         return [
             'ID',
             'Name',
-            'Category',
             'Interest Rate (%)',
             'Duration (Months)',
             'Min Amount',
@@ -48,7 +43,6 @@ class LoanProductsExport implements FromQuery, WithHeadings, WithMapping, WithCh
         return [
             $product->id,
             $product->name,
-            $product->category?->name,
             $product->interest_rate,
             $product->duration_months,
             $product->min_amount,
