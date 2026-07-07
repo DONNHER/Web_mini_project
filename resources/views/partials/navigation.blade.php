@@ -1,4 +1,4 @@
-<nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-[#FFEDD5]" x-data="{ mobileMenuOpen: false, notificationsOpen: false }">
+<nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-[#FFEDD5]" x-data="{ mobileMenuOpen: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20">
             <div class="flex items-center">
@@ -45,7 +45,7 @@
 
                     @auth
                         <!-- Notification Bell -->
-                        <div class="relative">
+                        <div class="relative" x-data="{ notificationsOpen: false }" @click.outside="notificationsOpen = false">
                             <button @click="notificationsOpen = !notificationsOpen" class="p-2 text-[#1A1A1A]/40 hover:text-[#FF6B00] transition relative">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -53,7 +53,7 @@
                                 <span id="notification-count" class="hidden absolute top-1.5 right-1.5 bg-[#FF6B00] text-white text-[7px] font-black px-1 py-0.5 rounded-full ring-2 ring-white">0</span>
                             </button>
 
-                            <div x-show="notificationsOpen" @click.outside="notificationsOpen = false" x-cloak x-transition class="absolute right-0 mt-4 w-80 bg-white border border-[#FFEDD5] rounded-2xl shadow-2xl z-50 overflow-hidden">
+                            <div x-show="notificationsOpen" x-cloak x-transition class="absolute right-0 mt-4 w-80 bg-white border border-[#FFEDD5] rounded-2xl shadow-2xl z-50 overflow-hidden">
                                 <div class="p-4 border-b border-[#FFEDD5] flex justify-between items-center bg-[#FEF6F0]/50">
                                     <h3 class="text-[#1A1A1A] font-black text-[10px] uppercase tracking-widest">Feed</h3>
                                     <button onclick="markAllNotificationsRead()" class="text-[8px] text-[#FF6B00] font-black uppercase no-underline hover:underline">Clear</button>
