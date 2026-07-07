@@ -174,22 +174,26 @@ class LoanController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'loan_product_id' => 'required|exists:loan_products,id',
             'principal_amount' => 'required|numeric|min:0',
             'comaker_1_id' => 'nullable|exists:users,id|different:user_id',
             'comaker_2_id' => 'nullable|exists:users,id|different:user_id|different:comaker_1_id',
             'purpose' => 'required|string|max:1000',
         ]);
 
-        $product = LoanProduct::findOrFail($request->loan_product_id);
+        // If no product is selected (field removed from UI), use a default configuration
+        $product = LoanProduct::where('is_active', true)->first();
+
+        $interestRate = $product ? $product->interest_rate : 5.0;
+        $termMonths = $product ? $product->duration_months : 12;
+        $productId = $product ? $product->id : null;
 
         try {
             DB::beginTransaction();
 
             $totalAmount = $this->lendingService->calculateTotal(
                 $request->principal_amount,
-                $product->interest_rate,
-                $product->duration_months
+                $interestRate,
+                $termMonths
             );
 
             // AI Categorization
@@ -197,11 +201,11 @@ class LoanController extends Controller
 
             $loan = Loan::create([
                 'user_id' => $request->user_id,
-                'loan_product_id' => $product->id,
+                'loan_product_id' => $productId,
                 'comaker_id' => $request->comaker_1_id,
                 'principal_amount' => $request->principal_amount,
-                'interest_rate' => $product->interest_rate,
-                'term_months' => $product->duration_months,
+                'interest_rate' => $interestRate,
+                'term_months' => $termMonths,
                 'total_amount' => $totalAmount,
                 'status' => 'approved',
                 'purpose' => $request->purpose . ($request->comaker_2_id ? " [Secondary Co-maker ID: {$request->comaker_2_id}]" : ""),
