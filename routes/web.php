@@ -79,6 +79,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     // Admin loan management
     Route::get('/loans', [LoanController::class, 'adminIndex'])->name('loans.index');
+    Route::get('/loans/create', [LoanController::class, 'adminCreate'])->name('loans.create');
+    Route::post('/loans', [LoanController::class, 'adminStore'])->name('loans.store');
     Route::patch('/loans/{loan}/status', [LoanController::class, 'updateStatus'])->name('loans.status');
 
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');

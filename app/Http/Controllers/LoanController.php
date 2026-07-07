@@ -157,6 +157,72 @@ class LoanController extends Controller
     }
 
     /**
+     * Admin: Display loan creation form
+     */
+    public function adminCreate()
+    {
+        $users = User::orderBy('name')->get(['id', 'name', 'email', 'shareholder_capital']);
+        $loanProducts = LoanProduct::where('is_active', true)->get();
+
+        return view('admin.loans.create', compact('users', 'loanProducts'));
+    }
+
+    /**
+     * Admin: Store loan created by administrator
+     */
+    public function adminStore(Request $request, \App\Services\AI\CategorizationService $categorizationService)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'loan_product_id' => 'required|exists:loan_products,id',
+            'principal_amount' => 'required|numeric|min:0',
+            'comaker_1_id' => 'nullable|exists:users,id|different:user_id',
+            'comaker_2_id' => 'nullable|exists:users,id|different:user_id|different:comaker_1_id',
+            'purpose' => 'required|string|max:1000',
+        ]);
+
+        $product = LoanProduct::findOrFail($request->loan_product_id);
+
+        try {
+            DB::beginTransaction();
+
+            $totalAmount = $this->lendingService->calculateTotal(
+                $request->principal_amount,
+                $product->interest_rate,
+                $product->duration_months
+            );
+
+            // AI Categorization
+            $aiTag = $categorizationService->tagLoanPurpose($request->purpose);
+
+            $loan = Loan::create([
+                'user_id' => $request->user_id,
+                'loan_product_id' => $product->id,
+                'comaker_id' => $request->comaker_1_id,
+                'principal_amount' => $request->principal_amount,
+                'interest_rate' => $product->interest_rate,
+                'term_months' => $product->duration_months,
+                'total_amount' => $totalAmount,
+                'status' => 'approved',
+                'purpose' => $request->purpose . ($request->comaker_2_id ? " [Secondary Co-maker ID: {$request->comaker_2_id}]" : ""),
+                'ai_tag' => $aiTag,
+                'due_date' => now()->addMonths($product->duration_months),
+                'payment_method' => 'Internal Transfer',
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.loans.index')
+                ->with('success', 'Loan successfully initialized for borrower.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Initialization Failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Admin: Update loan status
      */
     public function updateStatus(Request $request, Loan $loan)

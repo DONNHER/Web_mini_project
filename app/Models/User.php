@@ -23,6 +23,7 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         'password',
         'role_id',
         'tier',
+        'shareholder_capital',
         'status',
         'avatar',
         'is_comaker',
