@@ -41,6 +41,11 @@ class RegisteredUserController extends Controller
                     $fail('The provided invite code is invalid.');
                 }
             }],
+            'region' => ['nullable', 'string'],
+            'province' => ['nullable', 'string'],
+            'city' => ['nullable', 'string'],
+            'barangay' => ['nullable', 'string'],
+            'street_address' => ['nullable', 'string', 'max:500'],
         ]);
 
         $adminRole = \App\Models\Role::firstOrCreate(
@@ -58,6 +63,11 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'role_id' => $adminRole->id,
             'status' => 'pending',
+            'region' => $request->region,
+            'province' => $request->province,
+            'city' => $request->city,
+            'barangay' => $request->barangay,
+            'street_address' => $request->street_address,
         ]);
 
         // Generate the verification URL

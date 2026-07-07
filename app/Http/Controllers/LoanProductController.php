@@ -20,9 +20,9 @@ class LoanProductController extends Controller
         $query = $request->has('trashed') ? LoanProduct::onlyTrashed() : LoanProduct::query();
 
         if ($request->has('search') && $request->search != '') {
-            $loanProducts = $query->where('name', 'like', "%{$request->search}%")->paginate(100);
+            $loanProducts = $query->where('name', 'like', "%{$request->search}%")->paginate(10);
         } else {
-            $loanProducts = $query->paginate(100);
+            $loanProducts = $query->paginate(10);
         }
 
         return view('loan_products.index', compact('loanProducts'));

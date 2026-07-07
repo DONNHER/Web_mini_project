@@ -32,6 +32,11 @@ class ProfileController extends Controller
         $data = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
+            'region' => $request->input('region'),
+            'province' => $request->input('province'),
+            'city' => $request->input('city'),
+            'barangay' => $request->input('barangay'),
+            'street_address' => $request->input('street_address'),
         ];
 
         if ($request->hasFile('avatar')) {

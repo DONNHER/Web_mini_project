@@ -28,6 +28,11 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         'avatar',
         'is_comaker',
         'notification_preferences',
+        'region',
+        'province',
+        'city',
+        'barangay',
+        'street_address',
     ];
 
     protected $hidden = [
