@@ -39,7 +39,7 @@ class LoanProduct extends Model implements Auditable
      */
     public function shouldBeSearchable(): bool
     {
-        return $this->is_active;
+        return (bool) $this->is_active;
     }
 
     protected $fillable = [

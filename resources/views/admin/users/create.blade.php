@@ -8,8 +8,7 @@
             <svg class="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
         </a>
         <div>
-            <span class="text-[#FF6B00] font-black uppercase tracking-[0.4em] text-[10px] mb-1 block">Registry Entry</span>
-            <h1 class="text-4xl font-black text-[#1A1A1A] uppercase tracking-tighter">Initialize <span class="text-[#FF6B00]">Node</span></h1>
+            <h1 class="text-4xl font-black text-[#1A1A1A] uppercase tracking-tighter">Users Create</h1>
         </div>
     </div>
 @endsection

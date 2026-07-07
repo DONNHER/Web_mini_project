@@ -5,8 +5,7 @@
 @section('header')
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-            <span class="text-[#FF6B00] font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">Control Matrix</span>
-            <h1 class="text-5xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Command <span class="text-[#FF6B00]">Center</span></h1>
+            <h1 class="text-4xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Dashboard</h1>
         </div>
         <div class="flex space-x-3">
             <button id="refresh-dashboard" class="btn-secondary px-6">

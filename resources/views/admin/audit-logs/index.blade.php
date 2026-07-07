@@ -5,8 +5,7 @@
 @section('header')
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-            <span class="text-[#FF6B00] font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">Security Ledger</span>
-            <h1 class="text-5xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Audit <span class="text-[#FF6B00]">Registry</span></h1>
+            <h1 class="text-4xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Audit Logs</h1>
         </div>
         <div class="flex flex-wrap gap-4">
             <a href="{{ request()->fullUrlWithQuery(['export' => 'csv']) }}" class="btn-secondary px-6 no-underline">

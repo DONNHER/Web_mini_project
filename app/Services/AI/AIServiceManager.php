@@ -144,7 +144,18 @@ class AIServiceManager
     {
         $config = Config::get("ai.providers.{$provider}");
         if (!$config) return false;
-        if ($provider === 'ollama') return !empty($config['base_url']);
+
+        if ($provider === 'ollama') {
+            if (empty($config['base_url'])) return false;
+
+            // For remote nodes, do a quick health check to fail fast
+            try {
+                return Http::timeout(2)->get($config['base_url'])->successful();
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
+
         return !empty($config['key']);
     }
 

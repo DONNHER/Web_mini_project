@@ -53,7 +53,7 @@
                                 <span id="notification-count" class="hidden absolute top-1.5 right-1.5 bg-[#FF6B00] text-white text-[7px] font-black px-1 py-0.5 rounded-full ring-2 ring-white">0</span>
                             </button>
 
-                            <div x-show="notificationsOpen" x-cloak x-transition class="absolute right-0 mt-4 w-80 bg-white border border-[#FFEDD5] rounded-2xl shadow-2xl z-50 overflow-hidden" style="display: none;">
+                            <div x-show="notificationsOpen" x-cloak x-transition class="absolute right-0 mt-4 w-80 bg-white border border-[#FFEDD5] rounded-2xl shadow-2xl z-50 overflow-hidden">
                                 <div class="p-4 border-b border-[#FFEDD5] flex justify-between items-center bg-[#FEF6F0]/50">
                                     <h3 class="text-[#1A1A1A] font-black text-[10px] uppercase tracking-widest">Feed</h3>
                                     <button onclick="markAllNotificationsRead()" class="text-[8px] text-[#FF6B00] font-black uppercase no-underline hover:underline">Clear</button>
@@ -63,11 +63,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Chatbot -->
-                        <a href="{{ route('chatbot.index') }}" class="p-2 text-[#1A1A1A]/40 hover:text-[#FF6B00] transition no-underline" title="AI Assistant">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-                        </a>
 
                         @if(!auth()->user()->isAdmin())
                             <a href="{{ route('user.dashboard') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] px-3 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">Console</a>

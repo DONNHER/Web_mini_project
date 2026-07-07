@@ -15,7 +15,6 @@
             <p class="text-xl font-bold mb-12 max-w-xl opacity-60">Professional grade financial infrastructure for micro-lending and point-of-sale operations.</p>
             <div class="flex gap-4">
                 <a href="{{ route('loan_products.index') }}" class="btn-primary no-underline px-10">Launch Catalog</a>
-                <a href="{{ route('chatbot.index') }}" class="bg-white/10 text-white hover:bg-white/20 px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest no-underline transition-all">AI Assistant</a>
             </div>
         </div>
     </div>

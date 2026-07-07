@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'default' => env('AI_DEFAULT_PROVIDER', 'gemini'),
+    'default' => env('AI_DEFAULT_PROVIDER', 'ollama'),
 
     /*
     |--------------------------------------------------------------------------
@@ -40,9 +40,9 @@ return [
         ],
 
         'ollama' => [
-            'name' => 'Ollama (Local)',
-            'base_url' => env('OLLAMA_BASE_URL', 'http://localhost:11434'),
-            'model' => env('OLLAMA_MODEL', 'llama3.2'),
+            'name' => 'Ollama (Railway)',
+            'base_url' => env('OLLAMA_BASE_URL', 'https://ollama-production-0357.up.railway.app'),
+            'model' => env('OLLAMA_MODEL', 'qwen2.5:0.5b'),
             'rate_limit' => null, // unlimited
         ],
     ],
@@ -57,11 +57,11 @@ return [
     */
 
     'features' => [
-        'risk_assessment' => 'gemini',
+        'risk_assessment' => 'ollama',
         'chat' => 'ollama',
-        'credit_insights' => 'gemini',
-        'summarization' => 'gemini',
-        'recommendations' => 'gemini',
+        'credit_insights' => 'ollama',
+        'summarization' => 'ollama',
+        'recommendations' => 'ollama',
     ],
 
     /*

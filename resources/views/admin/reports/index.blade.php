@@ -4,8 +4,7 @@
 
 @section('header')
     <div>
-        <span class="text-[#FF6B00] font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">System Analytics</span>
-        <h1 class="text-5xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Intelligence <span class="text-[#FF6B00]">Center</span></h1>
+        <h1 class="text-4xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Reports</h1>
     </div>
 @endsection
 

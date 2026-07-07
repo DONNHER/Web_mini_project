@@ -27,8 +27,9 @@ class TestOllama extends Command
      */
     public function handle()
     {
-        $baseUrl = env('OLLAMA_BASE_URL', 'http://localhost:11434');
-        $model = env('OLLAMA_MODEL', 'llama3.2');
+        $config = Config::get('ai.providers.ollama');
+        $baseUrl = $config['base_url'];
+        $model = $config['model'];
         $prompt = $this->argument('prompt');
 
         $this->info("Initializing Neural Link to {$baseUrl}...");
@@ -70,7 +71,7 @@ class TestOllama extends Command
                 $this->line($aiResponseString);
                 $this->info("--------------------------------");
 
-                $this->success("Protocol successful. String length: " . strlen($aiResponseString));
+                $this->info("Protocol successful. String length: " . strlen($aiResponseString));
             } else {
                 $this->error("Neural generation failed: " . $response->status());
             }

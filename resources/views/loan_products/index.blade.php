@@ -5,8 +5,7 @@
 @section('header')
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-            <span class="text-[#FF6B00] font-black uppercase tracking-[0.4em] text-[10px] mb-2 block">System Inventory</span>
-            <h1 class="text-5xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Global <span class="text-[#FF6B00]">Catalog</span></h1>
+            <h1 class="text-4xl font-black text-[#1A1A1A] uppercase tracking-tighter leading-none">Loan Products</h1>
         </div>
         @auth
             @if(auth()->user()->isAdmin())

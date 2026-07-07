@@ -55,11 +55,6 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/profile/notifications', [\App\Http\Controllers\NotificationController::class, 'preferences'])->name('profile.notifications');
     Route::patch('/profile/notifications', [\App\Http\Controllers\NotificationController::class, 'updatePreferences'])->name('profile.notifications.update');
 
-    // Chatbot Routes
-    Route::get('/chat', [\App\Http\Controllers\ChatbotController::class, 'index'])->name('chatbot.index');
-    Route::post('/chat/send', [\App\Http\Controllers\ChatbotController::class, 'sendMessage'])->name('chatbot.send');
-    Route::post('/chat/clear', [\App\Http\Controllers\ChatbotController::class, 'clear'])->name('chatbot.clear');
-
     // AI Integration Routes
     Route::post('/ai/categorize', [\App\Http\Controllers\AIIntegrationController::class, 'categorize'])->name('ai.categorize');
 });
