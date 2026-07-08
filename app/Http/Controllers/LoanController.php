@@ -147,11 +147,22 @@ class LoanController extends Controller
     {
         $query = Loan::with('user', 'loanProduct');
 
-        if ($request->status) {
+        // Search by borrower name or ID
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user', function($uq) use ($search) {
+                    $uq->where('name', 'like', "%{$search}%");
+                })->orWhere('id', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        $loans = $query->orderBy('created_at', 'desc')->paginate(20);
+        $loans = $query->orderBy('created_at', 'desc')->paginate($request->get('per_page', 10))->withQueryString();
 
         return view('admin.loans.index', compact('loans'));
     }
@@ -232,7 +243,7 @@ class LoanController extends Controller
     public function updateStatus(Request $request, Loan $loan)
     {
         $request->validate([
-            'status' => 'required|in:pending,approved,released,rejected,completed,flagged'
+            'status' => 'required|in:pending,approved,released,disbursed,active,rejected,cancelled,completed,overdue,past due,flagged'
         ]);
 
         $data = ['status' => $request->status];
