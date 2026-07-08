@@ -23,7 +23,7 @@
                         @endif
                     @endguest
 
-                    <a href="{{ route('loan_products.index') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] hover:bg-[#FF6B00]/5 px-4 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">
+                    <a href="{{ auth()->user()->isAdmin() ? route('admin.loans.index') : route('loan_products.index') }}" class="text-[#1A1A1A]/60 hover:text-[#FF6B00] hover:bg-[#FF6B00]/5 px-4 py-2 rounded-xl transition font-extrabold no-underline uppercase text-[10px] tracking-widest">
                         Loan Management
                     </a>
 
